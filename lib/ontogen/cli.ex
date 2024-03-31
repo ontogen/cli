@@ -5,7 +5,9 @@ defmodule Ontogen.CLI do
 
   import Ontogen.CLI.Helper
 
-  @commands []
+  @commands [
+    Ontogen.CLI.Config
+  ]
 
   @command_map Map.new(@commands, &{&1.name(), &1})
 

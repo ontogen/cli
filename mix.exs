@@ -10,6 +10,7 @@ defmodule Ontogen.CLI.MixProject do
       elixir: "~> 1.16",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      elixirc_paths: elixirc_paths(Mix.env()),
       releases: releases(),
       escript: [
         main_module: Ontogen.CLI,
@@ -43,9 +44,22 @@ defmodule Ontogen.CLI.MixProject do
 
   defp deps do
     [
+      ontogen_dep(:ontogen, "~> 0.1"),
       {:optimus, "~> 0.5"},
       {:owl, "~> 0.9"},
-      {:burrito, "~> 1.0"}
+      {:burrito, "~> 1.0"},
+      {:hackney, "~> 1.17"},
+      {:briefly, "~> 0.5", only: :test}
     ]
   end
+
+  defp ontogen_dep(dep, version) do
+    case System.get_env("ONTOGEN_PACKAGES_SRC") do
+      "LOCAL" -> {dep, path: "../#{dep}"}
+      _ -> {dep, version}
+    end
+  end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 end
