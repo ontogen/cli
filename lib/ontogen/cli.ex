@@ -22,6 +22,18 @@ defmodule Ontogen.CLI do
 
   def opt_parser_spec, do: @opt_parser_spec
 
+  if Application.compile_env(:ontogen_cli, :in_burrito) do
+    def start(_type, _args) do
+      Burrito.Util.Args.get_arguments()
+      |> main()
+      |> System.halt()
+    end
+  else
+    def start(_, _) do
+      {:ok, self()}
+    end
+  end
+
   def main(args) do
     @opt_parser_spec
     |> Optimus.new!()
