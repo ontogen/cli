@@ -68,7 +68,6 @@ defmodule Ontogen.CLI.Init do
   alias Ontogen.Repository
 
   @ontogen_dir ".ontogen"
-  @local_config_file "config.ttl"
 
   @impl true
   def call(%{repo_uri: repo_uri}, options, _flags) do
@@ -110,7 +109,7 @@ defmodule Ontogen.CLI.Init do
               not is_nil(store_update_endpoint) and
               not is_nil(store_graph_store_endpoint) do
     adapter_type = store_adapter || Ontogen.Store.Oxigraph
-    config_path = directory |> ontogen_dir() |> Path.join(@local_config_file)
+    config_path = Path.expand(Ontogen.Config.path(:local), directory)
 
     with {:ok, adapter} <-
            adapter_type.build(

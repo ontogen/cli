@@ -121,7 +121,7 @@ defmodule Ontogen.CLI.InitTest do
     ontogen_dir = Path.join(dir, ".ontogen")
     assert File.exists?(ontogen_dir)
 
-    config = Path.join(ontogen_dir, "config.ttl")
+    config = Path.join(ontogen_dir, "test_config.ttl")
 
     if Keyword.get(opts, :with_config, true) do
       assert File.exists?(config)

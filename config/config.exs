@@ -3,8 +3,9 @@ import Config
 # Ontogen config ####################################################
 
 config :ontogen,
-  repo_id_file: ".ontogen/repo",
+  # CAUTION: These paths also determine the paths of the config and repo id file created with the init command
   local_config_path: ".ontogen/config.ttl",
+  repo_id_file: ".ontogen/repo",
   allow_configless_mode: true
 
 config :ontogen,
