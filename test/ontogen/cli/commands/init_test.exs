@@ -1,11 +1,11 @@
 defmodule Ontogen.CLI.InitTest do
-  use Ontogen.CLI.StoreCase
+  use Ontogen.CLI.StoreCase, async: false
 
   doctest Ontogen.CLI.Init
 
   alias Ontogen.{CLI, Repository}
 
-  import Ontogen.TestHelper
+  import Ontogen.CLI.TestHelper
   import Ontogen.CLI.Helper
   import ExUnit.CaptureIO
 
@@ -17,7 +17,7 @@ defmodule Ontogen.CLI.InitTest do
     [dir: tmp_dir]
   end
 
-  setup {Ontogen.TestHelper, :configless_ontogen}
+  setup {Ontogen.CLI.TestHelper, :configless_ontogen}
 
   @repo_id "http://example.repo.com/"
   @dataset_id "http://example.repo.com/dataset"

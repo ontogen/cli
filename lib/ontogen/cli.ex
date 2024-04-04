@@ -6,7 +6,12 @@ defmodule Ontogen.CLI do
   import Ontogen.CLI.Helper
 
   @commands [
-    Ontogen.CLI.Config
+    Ontogen.CLI.Init,
+    Ontogen.CLI.Add,
+    Ontogen.CLI.Remove,
+    Ontogen.CLI.Update,
+    Ontogen.CLI.Replace,
+    Ontogen.CLI.Stage
   ]
 
   @command_map Map.new(@commands, &{&1.name(), &1})
@@ -44,8 +49,11 @@ defmodule Ontogen.CLI do
     |> handle_result()
   end
 
-  defp call_command({[command], %Optimus.ParseResult{args: args, options: options, flags: flags}}) do
-    apply(@command_map[command], :call, [args, options, flags])
+  defp call_command(
+         {[command],
+          %Optimus.ParseResult{args: args, options: options, flags: flags, unknown: unknown}}
+       ) do
+    apply(@command_map[command], :call, [args, options, flags, unknown])
   rescue
     exception -> {:error, exception}
   end

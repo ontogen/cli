@@ -45,6 +45,10 @@ defmodule Ontogen.CLI.MixProject do
   defp deps do
     [
       ontogen_dep(:ontogen, "~> 0.1"),
+      rdf_ex_dep(:rdf, "~> 1.2"),
+      rdf_ex_dep(:json_ld, ">= 0.3.6"),
+      rdf_ex_dep(:rdf_xml, "~> 1.0"),
+      rdf_ex_dep(:prov, "~> 0.1"),
       {:optimus, "~> 0.5"},
       {:owl, "~> 0.9"},
       {:burrito, "~> 1.0"},
@@ -56,6 +60,13 @@ defmodule Ontogen.CLI.MixProject do
   defp ontogen_dep(dep, version) do
     case System.get_env("ONTOGEN_PACKAGES_SRC") do
       "LOCAL" -> {dep, path: "../#{dep}"}
+      _ -> {dep, version}
+    end
+  end
+
+  defp rdf_ex_dep(dep, version) do
+    case System.get_env("RDF_EX_PACKAGES_SRC") do
+      "LOCAL" -> {dep, path: "../../../RDF.ex/src/#{dep}"}
       _ -> {dep, version}
     end
   end

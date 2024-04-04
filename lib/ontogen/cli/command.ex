@@ -1,10 +1,10 @@
 defmodule Ontogen.CLI.Command do
-  @doc """
+  @moduledoc """
   Behaviour for the Ontogen CLI commands.
 
   The result integer or `:abort` is passed to `System.halt/1`.
   """
-  @callback call(args :: map, options :: map, flags :: map) ::
+  @callback call(args :: map, options :: map, flags :: map, unknown :: list(binary)) ::
               :ok | {:ok, non_neg_integer()} | {:error, binary} | :abort
 
   defmacro __using__(command_spec) do

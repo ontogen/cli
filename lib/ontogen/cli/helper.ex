@@ -1,4 +1,6 @@
 defmodule Ontogen.CLI.Helper do
+  alias RDF.XSD
+
   @message_category_colors %{
     success: :green,
     info: :blue,
@@ -25,6 +27,19 @@ defmodule Ontogen.CLI.Helper do
     error(error)
     1
   end
+
+  def valid_xsd_datetime(string) do
+    datetime = XSD.datetime(string)
+
+    if XSD.DateTime.valid?(datetime) do
+      {:ok, datetime}
+    else
+      {:error, "invalid datetime"}
+    end
+  end
+
+  def user_iri, do: Ontogen.Config.user().__id__
+  def user_id, do: to_string(user_iri())
 
   def adapter_types do
     "e.g. Oxigraph or Generic"

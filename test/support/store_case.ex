@@ -1,5 +1,5 @@
 defmodule Ontogen.CLI.StoreCase do
-  use ExUnit.CaseTemplate, async: false
+  use ExUnit.CaseTemplate
 
   alias Ontogen.Store
 
@@ -8,7 +8,7 @@ defmodule Ontogen.CLI.StoreCase do
       alias Ontogen.Store
 
       import unquote(__MODULE__)
-      import Ontogen.TestHelper
+      import Ontogen.CLI.TestHelper
 
       setup do
         on_exit(fn -> clean_store!() end)

@@ -1,4 +1,4 @@
-defmodule Ontogen.TestHelper do
+defmodule Ontogen.CLI.TestHelper do
   import ExUnit.Assertions
 
   import ExUnit.CaptureLog

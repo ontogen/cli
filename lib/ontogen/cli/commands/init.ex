@@ -70,7 +70,7 @@ defmodule Ontogen.CLI.Init do
   @ontogen_dir ".ontogen"
 
   @impl true
-  def call(%{repo_uri: repo_uri}, options, _flags) do
+  def call(%{repo_uri: repo_uri}, options, _flags, []) do
     with {:ok, directory} <- setup_directory(options),
          :ok <- create_local_config(options, directory) do
       File.cd!(directory, fn ->
