@@ -65,7 +65,7 @@ defmodule Ontogen.CLI.Init do
       ]
     ]
 
-  alias Ontogen.Repository
+  alias Ontogen.{Repository, Dataset, ProvGraph}
 
   @ontogen_dir ".ontogen"
 
@@ -135,8 +135,8 @@ defmodule Ontogen.CLI.Init do
   defp create_repository(repo_uri, %{dataset_uri: dataset_uri, prov_graph_uri: prov_graph_uri}) do
     with {:ok, repository} <-
            Repository.build(repo_uri,
-             dataset: RDF.iri(dataset_uri),
-             prov_graph: RDF.iri(prov_graph_uri)
+             dataset: Dataset.build!(dataset_uri),
+             prov_graph: ProvGraph.build!(prov_graph_uri)
            ) do
       Ontogen.create_repo(repository)
     end

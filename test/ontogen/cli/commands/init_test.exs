@@ -37,13 +37,17 @@ defmodule Ontogen.CLI.InitTest do
     assert_ontogen_dir(dir)
     assert config_available?()
 
+    expected_repo =
+      Repository.build!(@repo_id,
+        dataset: Ontogen.Dataset.build!(@dataset_id),
+        prov_graph: Ontogen.ProvGraph.build!(@prov_graph_id)
+      )
+
+    assert Ontogen.repository() == expected_repo
+
     :ok = reboot_ontogen()
 
-    assert Ontogen.repository() ==
-             Repository.build!(@repo_id,
-               dataset: Ontogen.Dataset.build!(@dataset_id),
-               prov_graph: Ontogen.ProvGraph.build!(@prov_graph_id)
-             )
+    assert Ontogen.repository() == expected_repo
   end
 
   test "without local and global store config" do
