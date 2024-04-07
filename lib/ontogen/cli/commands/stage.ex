@@ -1,5 +1,6 @@
 defmodule Ontogen.CLI.Stage do
   alias Ontogen.CLI.{Action, Helper}
+  alias Ontogen.SpeechAct
   alias Ontogen.SpeechAct.Changeset
   alias Ontogen.NS.Og
   alias RDF.{Dataset, Graph, Description}
@@ -39,6 +40,10 @@ defmodule Ontogen.CLI.Stage do
     end
   end
 
+  def reset(file \\ @default_file) do
+    File.rm!(file)
+  end
+
   def load(file, on_missing \\ {:error, "no stage file found"}) do
     if File.exists?(file) do
       RDF.read_file(file)
@@ -69,9 +74,10 @@ defmodule Ontogen.CLI.Stage do
 
   def speech_act_description(file_or_dataset \\ @default_file)
 
-  def speech_act_description(%Dataset{} = dataset) do
-    graph = Dataset.default_graph(dataset)
+  def speech_act_description(%Dataset{} = dataset),
+    do: dataset |> Dataset.default_graph() |> speech_act_description()
 
+  def speech_act_description(%Graph{} = graph) do
     case Graph.query(graph, {:speech_act?, :a, Og.SpeechAct}) do
       [] ->
         {:ok, nil}
@@ -86,6 +92,28 @@ defmodule Ontogen.CLI.Stage do
   end
 
   def speech_act_description(file), do: file |> load!() |> speech_act_description()
+
+  def speech_act(file_or_dataset \\ @default_file)
+
+  def speech_act(%Dataset{} = dataset) do
+    graph = Dataset.default_graph(dataset)
+
+    case speech_act_description(graph) do
+      {:ok, nil} ->
+        {:error, "empty stage"}
+
+      {:ok, %Description{subject: speech_act_id}} ->
+        with {:ok, speech_act} <- SpeechAct.load(graph, speech_act_id),
+             {:ok, speech_act} <- SpeechAct.update_changeset(speech_act, changeset(dataset)) do
+          {:ok, speech_act, Graph.delete_descriptions(graph, speech_act_id)}
+        end
+
+      {:error, _} = error ->
+        error
+    end
+  end
+
+  def speech_act(file), do: file |> load!() |> speech_act()
 
   defp new_stage(nil, input_changeset, options) do
     {:ok,

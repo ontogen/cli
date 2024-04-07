@@ -49,4 +49,10 @@ defmodule Ontogen.CLI.Action do
       ]
     ]
   end
+
+  def options?(%{add: value}) when value not in [nil, []], do: true
+  def options?(%{update: value}) when value not in [nil, []], do: true
+  def options?(%{replace: value}) when value not in [nil, []], do: true
+  def options?(%{remove: value}) when value not in [nil, []], do: true
+  def options?(%{}), do: false
 end

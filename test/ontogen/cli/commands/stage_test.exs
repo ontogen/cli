@@ -111,7 +111,7 @@ defmodule Ontogen.CLI.StageTest do
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act, time: time, speaker: [speaker1, speaker2])
 
-      time = "2016-01-23T23:50:07"
+      time = DateTime.to_iso8601(datetime())
       assert CLI.main(~w[remove #{file2} --created-at #{time}]) == 0
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act, time: time, speaker: [speaker1, speaker2])
