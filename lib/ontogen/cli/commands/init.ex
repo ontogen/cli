@@ -1,4 +1,4 @@
-defmodule Ontogen.CLI.Init do
+defmodule Ontogen.CLI.Commands.Init do
   alias Ontogen.CLI.Helper
 
   use Ontogen.CLI.Command,

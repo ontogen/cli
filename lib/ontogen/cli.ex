@@ -6,13 +6,13 @@ defmodule Ontogen.CLI do
   import Ontogen.CLI.Helper
 
   @commands [
-    Ontogen.CLI.Init,
-    Ontogen.CLI.Add,
-    Ontogen.CLI.Remove,
-    Ontogen.CLI.Update,
-    Ontogen.CLI.Replace,
-    Ontogen.CLI.Stage,
-    Ontogen.CLI.Commit
+    Ontogen.CLI.Commands.Init,
+    Ontogen.CLI.Commands.Add,
+    Ontogen.CLI.Commands.Remove,
+    Ontogen.CLI.Commands.Update,
+    Ontogen.CLI.Commands.Replace,
+    Ontogen.CLI.Commands.Stage,
+    Ontogen.CLI.Commands.Commit
   ]
 
   @command_map Map.new(@commands, &{&1.name(), &1})

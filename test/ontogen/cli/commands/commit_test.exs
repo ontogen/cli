@@ -1,7 +1,7 @@
-defmodule Ontogen.CLI.CommitTest do
+defmodule Ontogen.CLI.Commands.CommitTest do
   use Ontogen.CLI.RepositoryCase, async: false
 
-  doctest Ontogen.CLI.Commit
+  doctest Ontogen.CLI.Commands.Commit
 
   alias Ontogen.CLI.Stage
   alias RDF.{Graph, Dataset}

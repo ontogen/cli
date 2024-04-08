@@ -1,11 +1,11 @@
-defmodule Ontogen.CLI.StageTest do
+defmodule Ontogen.CLI.Commands.StageTest do
   use Ontogen.CLI.RepositoryCase
 
-  doctest Ontogen.CLI.Add
-  doctest Ontogen.CLI.Update
-  doctest Ontogen.CLI.Replace
-  doctest Ontogen.CLI.Remove
-  doctest Ontogen.CLI.Stage
+  doctest Ontogen.CLI.Commands.Add
+  doctest Ontogen.CLI.Commands.Update
+  doctest Ontogen.CLI.Commands.Replace
+  doctest Ontogen.CLI.Commands.Remove
+  doctest Ontogen.CLI.Commands.Stage
 
   alias Ontogen.CLI.Stage
   alias Ontogen.SpeechAct.Changeset

@@ -1,7 +1,7 @@
-defmodule Ontogen.CLI.InitTest do
+defmodule Ontogen.CLI.Commands.InitTest do
   use Ontogen.CLI.StoreCase, async: false
 
-  doctest Ontogen.CLI.Init
+  doctest Ontogen.CLI.Commands.Init
 
   alias Ontogen.{CLI, Repository}
 

@@ -1,4 +1,4 @@
-defmodule Ontogen.CLI.Commit do
+defmodule Ontogen.CLI.Commands.Commit do
   alias Ontogen.CLI.{Action, Stage, Helper}
   alias RDF.XSD
 
@@ -6,7 +6,7 @@ defmodule Ontogen.CLI.Commit do
     name: :commit,
     about: "Add data to the repository in the store and record the changes",
     args: [
-      stage: Stage.file_opt_spec()
+      stage: Ontogen.CLI.Commands.Stage.file_opt_spec()
     ],
     options:
       Action.command_opt_spec() ++
@@ -41,17 +41,17 @@ defmodule Ontogen.CLI.Commit do
   import Ontogen.IdUtils, only: [to_hash: 1]
 
   @impl true
-  def call(%{stage: file}, options, flags, []) do
+  def call(%{stage: file}, options, _flags, []) do
     stage_file = file || Stage.default_file()
 
-    with :ok <- stage(stage_file, options, flags) do
+    with :ok <- stage(stage_file, options) do
       commit(stage_file, options)
     end
   end
 
-  defp stage(stage_file, options, flags) do
-    if Action.options?(options) do
-      Stage.stage(options, Map.put(options, :stage, stage_file), flags)
+  defp stage(stage_file, changes_and_options) do
+    if Action.options?(changes_and_options) do
+      Stage.stage(stage_file, changes_and_options, changes_and_options)
     else
       :ok
     end

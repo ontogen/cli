@@ -18,7 +18,7 @@ defmodule Ontogen.CLI.Action.Command do
     options:
       Action.speech_act_opt_spec() ++
         [
-          stage: Stage.file_opt_spec()
+          stage: Ontogen.CLI.Commands.Stage.file_opt_spec()
         ],
     allow_unknown_args: true
   ]
@@ -30,8 +30,8 @@ defmodule Ontogen.CLI.Action.Command do
     quote do
       use Ontogen.CLI.Command, unquote(Macro.escape(command_spec))
 
-      def call(%{file: file}, options, flags, files) do
-        Stage.stage([{unquote(action), [file | files]}], options, flags)
+      def call(%{file: file}, options, _flags, files) do
+        Stage.stage([{unquote(action), [file | files]}], options)
       end
     end
   end
