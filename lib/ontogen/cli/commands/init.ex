@@ -134,7 +134,7 @@ defmodule Ontogen.CLI.Commands.Init do
 
   defp create_repository(repo_uri, %{dataset_uri: dataset_uri, prov_graph_uri: prov_graph_uri}) do
     with {:ok, repository} <-
-           Repository.build(repo_uri,
+           Repository.new(repo_uri,
              dataset: Dataset.build!(dataset_uri),
              prov_graph: ProvGraph.build!(prov_graph_uri)
            ) do

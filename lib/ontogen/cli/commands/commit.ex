@@ -74,7 +74,7 @@ defmodule Ontogen.CLI.Commands.Commit do
 
   defp commit_info(commit) do
     [first_line | _] = String.split(commit.message, "\n", parts: 2)
-    root_commit = unless commit.parent, do: "(root-commit) "
+    root_commit = if Ontogen.Commit.root?(commit), do: "(root-commit) "
 
     insertions_count =
       ((commit.add && RTC.Compound.triple_count(commit.add.statements)) || 0) +

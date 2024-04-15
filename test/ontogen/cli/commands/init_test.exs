@@ -38,7 +38,7 @@ defmodule Ontogen.CLI.Commands.InitTest do
     assert config_available?()
 
     expected_repo =
-      Repository.build!(@repo_id,
+      Repository.new!(@repo_id,
         dataset: Ontogen.Dataset.build!(@dataset_id),
         prov_graph: Ontogen.ProvGraph.build!(@prov_graph_id)
       )
@@ -75,7 +75,7 @@ defmodule Ontogen.CLI.Commands.InitTest do
     :ok = reboot_ontogen()
 
     assert Ontogen.repository() ==
-             Repository.build!(@repo_id,
+             Repository.new!(@repo_id,
                dataset: Ontogen.Dataset.build!(@dataset_id),
                prov_graph: Ontogen.ProvGraph.build!(@prov_graph_id)
              )
@@ -103,7 +103,7 @@ defmodule Ontogen.CLI.Commands.InitTest do
     :ok = reboot_ontogen()
 
     assert Ontogen.repository() ==
-             Repository.build!(@repo_id,
+             Repository.new!(@repo_id,
                dataset: Ontogen.Dataset.build!(@dataset_id),
                prov_graph: Ontogen.ProvGraph.build!(@prov_graph_id)
              )
