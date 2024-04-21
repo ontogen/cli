@@ -138,7 +138,7 @@ defmodule Ontogen.CLI.Commands.Init do
              dataset: Dataset.build!(dataset_uri),
              prov_graph: ProvGraph.build!(prov_graph_uri)
            ) do
-      Ontogen.create_repo(repository)
+      Ontogen.create_repository(repository)
     end
   end
 
