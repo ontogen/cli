@@ -45,7 +45,7 @@ defmodule Ontogen.CLI.MixProject do
   defp deps do
     [
       ontogen_dep(:ontogen, "~> 0.1"),
-      rdf_ex_dep(:rdf, "~> 1.2"),
+      rdf_ex_dep(:rdf, "~> 2.0"),
       rdf_ex_dep(:json_ld, ">= 0.3.6"),
       rdf_ex_dep(:rdf_xml, "~> 1.0"),
       rdf_ex_dep(:prov, "~> 0.1"),

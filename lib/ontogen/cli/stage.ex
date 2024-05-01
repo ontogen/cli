@@ -5,7 +5,7 @@ defmodule Ontogen.CLI.Stage do
   alias Ontogen.NS.Og
   alias RDF.{Dataset, Graph, Description}
 
-  @default_file "STAGE.nq"
+  @default_file "STAGE.trig"
   def default_file, do: @default_file
 
   def stage(changes, options) do

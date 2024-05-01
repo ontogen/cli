@@ -76,12 +76,18 @@ defmodule Ontogen.CLI.TestFactories do
          |> RDF.graph()
   def graph, do: @graph
 
-  def graph(statement) when is_integer(statement) or is_atom(statement) do
-    statement |> statement() |> RDF.graph()
+  def graph(statements, opts \\ [])
+
+  def graph(statement, opts) when is_integer(statement) or is_atom(statement) do
+    statement |> statement() |> RDF.graph(opts)
   end
 
-  def graph(statements) when is_list(statements) do
-    statements |> statements() |> RDF.graph()
+  def graph(statements, opts) when is_list(statements) do
+    statements |> statements() |> RDF.graph(opts)
+  end
+
+  def graph(other, opts) do
+    RDF.graph(other, opts)
   end
 
   def graph_file(statements, opts \\ []) do
@@ -92,7 +98,7 @@ defmodule Ontogen.CLI.TestFactories do
         "test_data_#{:erlang.unique_integer([:positive])}.#{file_type}"
       end)
 
-    graph = graph(statements)
+    graph = graph(statements, opts)
 
     RDF.write_file!(graph, file, opts)
     {graph, file}

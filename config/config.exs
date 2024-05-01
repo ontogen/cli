@@ -11,6 +11,11 @@ config :ontogen,
 config :ontogen,
   grax_id_spec: Ontogen.IdSpec
 
+# RDF config ########################################################
+
+config :rdf,
+  use_standard_prefixes: false
+
 # SPARQL.Client config ##############################################
 
 config :sparql_client,
