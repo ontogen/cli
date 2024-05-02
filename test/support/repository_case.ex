@@ -3,6 +3,8 @@ defmodule Ontogen.CLI.RepositoryCase do
 
   alias Ontogen.Store
 
+  import Ontogen.CLI.TestFactories
+
   using do
     quote do
       alias Ontogen.CLI
@@ -40,5 +42,23 @@ defmodule Ontogen.CLI.RepositoryCase do
         [dir: tmp_dir]
       end
     end
+  end
+
+  def init_commit_history(history) when is_list(history) do
+    start_offset = Enum.count(history)
+    time = datetime()
+
+    history
+    |> Enum.with_index(&{&1, start_offset - &2})
+    |> Enum.map(fn {commit_args, time_offset} ->
+      commit_args =
+        Keyword.put_new(commit_args, :time, DateTime.add(time, 0 - time_offset, :hour))
+
+      assert {:ok, commit} = Ontogen.commit(commit_args)
+      assert Ontogen.head() == commit
+
+      commit
+    end)
+    |> Enum.reverse()
   end
 end

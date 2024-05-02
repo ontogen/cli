@@ -12,7 +12,8 @@ defmodule Ontogen.CLI do
     Ontogen.CLI.Commands.Update,
     Ontogen.CLI.Commands.Replace,
     Ontogen.CLI.Commands.Stage,
-    Ontogen.CLI.Commands.Commit
+    Ontogen.CLI.Commands.Commit,
+    Ontogen.CLI.Commands.Log
   ]
 
   @command_map Map.new(@commands, &{&1.name(), &1})
