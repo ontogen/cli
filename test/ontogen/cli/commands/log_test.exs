@@ -5,6 +5,15 @@ defmodule Ontogen.CLI.Commands.LogTest do
 
   import Ontogen.IdUtils
 
+  test "with empty repository" do
+    assert {1, log} =
+             with_io(fn ->
+               CLI.main(~w[log])
+             end)
+
+    assert log =~ "Repository #{Ontogen.repository().__id__} does not have any commits yet"
+  end
+
   test "default format" do
     init_history()
 
