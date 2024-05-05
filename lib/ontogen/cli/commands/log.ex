@@ -1,6 +1,5 @@
 defmodule Ontogen.CLI.Commands.Log do
-  alias Ontogen.Commit
-  alias Ontogen.HistoryType.Formatter.{CommitFormatter, ChangesetFormatter}
+  alias Ontogen.{Commit, Changeset, FormatterHelper}
 
   use Ontogen.CLI.Command,
     name: :log,
@@ -17,7 +16,7 @@ defmodule Ontogen.CLI.Commands.Log do
       format: [
         long: "--format",
         value_name: "STRING",
-        help: "Log format. Possible values: #{Enum.join(CommitFormatter.formats(), ", ")}",
+        help: "Log format. Possible values: #{Enum.join(Commit.Formatter.formats(), ", ")}",
         default: "default",
         parser: :string
       ],
@@ -25,7 +24,7 @@ defmodule Ontogen.CLI.Commands.Log do
         long: "--hash-format",
         value_name: "STRING",
         help:
-          "Hash format. Possible values: #{Enum.join(CommitFormatter.hash_formats(), ", ")} (Default is format specific)",
+          "Hash format. Possible values: #{Enum.join(FormatterHelper.hash_formats(), ", ")} (Default is format specific)",
         parser: :string
       ],
       resource: [
@@ -131,7 +130,7 @@ defmodule Ontogen.CLI.Commands.Log do
     do: Keyword.put(opts, :changes, extract_changeset_formats(flags))
 
   defp extract_changeset_formats(flags) do
-    Enum.flat_map(ChangesetFormatter.formats(), fn format ->
+    Enum.flat_map(Changeset.Formatter.formats(), fn format ->
       if flags[format], do: [format], else: []
     end)
   end
