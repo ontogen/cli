@@ -32,12 +32,10 @@ defmodule Ontogen.CLI.RepositoryCase do
         end)
 
         {0, _} =
-          with_io(fn ->
-            CLI.main(
-              ~w[init http://example.repo.com/ --dataset http://example.repo.com/dataset --prov-graph http://example.repo.com/prov] ++
-                ~w[--query-url http://localhost:7879/query --update-url http://localhost:7879/update --graph-store-url http://localhost:7879/store]
-            )
-          end)
+          capture_cli(
+            ~s[init http://example.repo.com/ --dataset http://example.repo.com/dataset --prov-graph http://example.repo.com/prov ] <>
+              ~s[--query-url http://localhost:7879/query --update-url http://localhost:7879/update --graph-store-url http://localhost:7879/store]
+          )
 
         [dir: tmp_dir]
       end

@@ -24,14 +24,14 @@ defmodule Ontogen.CLI.Commands.StageTest do
 
       refute File.exists?(Stage.default_file())
 
-      assert CLI.main(~w[add #{file1}]) == 0
+      assert cli(~s[add #{file1}]) == 0
 
       assert File.exists?(Stage.default_file())
       assert Stage.changeset() == Changeset.new!(add: graph1)
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act)
 
-      assert CLI.main(~w[add #{file2} #{file3}]) == 0
+      assert cli(~s[add #{file2} #{file3}]) == 0
 
       assert Stage.changeset() ==
                Changeset.new!(add: graph([1, 2, 3, 4], prefixes: [ex: EX, rdf: RDF]))
@@ -39,7 +39,7 @@ defmodule Ontogen.CLI.Commands.StageTest do
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act)
 
-      assert CLI.main(~w[remove #{file3}]) == 0
+      assert cli(~s[remove #{file3}]) == 0
 
       assert Stage.changeset() ==
                Changeset.new!(
@@ -47,7 +47,7 @@ defmodule Ontogen.CLI.Commands.StageTest do
                  remove: graph([3, 4], prefixes: [ex: EX, rdf: RDF])
                )
 
-      assert CLI.main(~w[update #{file2}]) == 0
+      assert cli(~s[update #{file2}]) == 0
 
       assert Stage.changeset() ==
                Changeset.new!(
@@ -56,7 +56,7 @@ defmodule Ontogen.CLI.Commands.StageTest do
                  remove: graph([4], prefixes: [ex: EX, rdf: RDF])
                )
 
-      assert CLI.main(~w[replace #{file2} #{file3}]) == 0
+      assert cli(~s[replace #{file2} #{file3}]) == 0
 
       assert Stage.changeset() ==
                Changeset.new!(
@@ -73,14 +73,14 @@ defmodule Ontogen.CLI.Commands.StageTest do
 
       refute File.exists?(custom_stage_file)
 
-      assert CLI.main(~w[add #{file} --stage #{custom_stage_file}]) == 0
+      assert cli(~s[add #{file} --stage #{custom_stage_file}]) == 0
 
       assert File.exists?(custom_stage_file)
       assert Stage.changeset(custom_stage_file) == Changeset.new!(add: graph)
       assert {:ok, speech_act} = Stage.speech_act_description(custom_stage_file)
       assert_speech_act_match(speech_act)
 
-      assert CLI.main(~w[update #{file2} #{file3} --stage #{custom_stage_file}]) == 0
+      assert cli(~s[update #{file2} #{file3} --stage #{custom_stage_file}]) == 0
 
       assert Stage.changeset(custom_stage_file) ==
                Changeset.new!(
@@ -100,33 +100,33 @@ defmodule Ontogen.CLI.Commands.StageTest do
       speaker3 = RDF.iri(EX.Speaker3)
 
       time = "2015-01-23T23:50:07"
-      assert CLI.main(~w[add #{file1} --created-at #{time} --created-by #{speaker1}]) == 0
+      assert cli(~s[add #{file1} --created-at #{time} --created-by #{speaker1}]) == 0
 
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act, time: time, speaker: speaker1)
 
       time = "2015-01-23T23:59:07.123+02:30"
 
-      assert CLI.main(~w[add #{file2} #{file1} --created-at #{time} --created-by #{speaker2}]) ==
+      assert cli(~s[add #{file2} #{file1} --created-at #{time} --created-by #{speaker2}]) ==
                0
 
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act, time: time, speaker: [speaker1, speaker2])
 
       time = DateTime.to_iso8601(datetime())
-      assert CLI.main(~w[remove #{file2} --created-at #{time}]) == 0
+      assert cli(~s[remove #{file2} --created-at #{time}]) == 0
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act, time: time, speaker: [speaker1, speaker2])
 
-      assert CLI.main(~w[add #{file2} --created-by #{speaker1}]) == 0
+      assert cli(~s[add #{file2} --created-by #{speaker1}]) == 0
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act, time: :now, speaker: [speaker1, speaker2])
 
-      assert CLI.main(~w[update #{file2} --created-by #{speaker3}]) == 0
+      assert cli(~s[update #{file2} --created-by #{speaker3}]) == 0
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act, time: :now, speaker: [speaker1, speaker2, speaker3])
 
-      assert CLI.main(~w[replace #{file2}]) == 0
+      assert cli(~s[replace #{file2}]) == 0
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act, time: :now, speaker: [speaker1, speaker2, speaker3])
     end
@@ -140,14 +140,14 @@ defmodule Ontogen.CLI.Commands.StageTest do
 
       refute File.exists?(Stage.default_file())
 
-      assert CLI.main(~w[stage --update #{file1}]) == 0
+      assert cli(~s[stage --update #{file1}]) == 0
 
       assert File.exists?(Stage.default_file())
       assert Stage.changeset() == Changeset.new!(update: graph1)
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act)
 
-      assert CLI.main(~w[stage --replace #{file2} --replace #{file3}]) == 0
+      assert cli(~s[stage --replace #{file2} --replace #{file3}]) == 0
 
       assert Stage.changeset() ==
                Changeset.new!(
@@ -158,7 +158,7 @@ defmodule Ontogen.CLI.Commands.StageTest do
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act)
 
-      assert CLI.main(~w[stage --add #{file3} --remove #{file1}]) == 0
+      assert cli(~s[stage --add #{file3} --remove #{file1}]) == 0
 
       assert Stage.changeset() ==
                Changeset.new!(
@@ -175,14 +175,14 @@ defmodule Ontogen.CLI.Commands.StageTest do
 
       refute File.exists?(custom_stage_file)
 
-      assert CLI.main(~w[stage #{custom_stage_file} --add #{file}]) == 0
+      assert cli(~s[stage #{custom_stage_file} --add #{file}]) == 0
 
       assert File.exists?(custom_stage_file)
       assert Stage.changeset(custom_stage_file) == Changeset.new!(add: graph)
       assert {:ok, speech_act} = Stage.speech_act_description(custom_stage_file)
       assert_speech_act_match(speech_act)
 
-      assert CLI.main(~w[stage #{custom_stage_file} --update #{file2} --update #{file3}]) == 0
+      assert cli(~s[stage #{custom_stage_file} --update #{file2} --update #{file3}]) == 0
 
       assert Stage.changeset(custom_stage_file) ==
                Changeset.new!(
@@ -202,30 +202,30 @@ defmodule Ontogen.CLI.Commands.StageTest do
       speaker3 = RDF.iri(EX.Speaker3)
 
       time = "2015-01-23T23:50:07"
-      assert CLI.main(~w[stage --add #{file1} --created-at #{time} --created-by #{speaker1}]) == 0
+      assert cli(~s[stage --add #{file1} --created-at #{time} --created-by #{speaker1}]) == 0
 
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act, time: time, speaker: speaker1)
 
       time = "2015-01-23T23:59:07.123+02:30"
 
-      assert CLI.main(
-               ~w[stage --add #{file2} --add #{file1} --created-at #{time} --created-by #{speaker2}]
+      assert cli(
+               ~s[stage --add #{file2} --add #{file1} --created-at #{time} --created-by #{speaker2}]
              ) == 0
 
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act, time: time, speaker: [speaker1, speaker2])
 
       time = "2016-01-23T23:50:07"
-      assert CLI.main(~w[stage --remove #{file2} --created-at #{time}]) == 0
+      assert cli(~s[stage --remove #{file2} --created-at #{time}]) == 0
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act, time: time, speaker: [speaker1, speaker2])
 
-      assert CLI.main(~w[stage --update #{file2} --created-by #{speaker3}]) == 0
+      assert cli(~s[stage --update #{file2} --created-by #{speaker3}]) == 0
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act, time: :now, speaker: [speaker1, speaker2, speaker3])
 
-      assert CLI.main(~w[stage --replace #{file2}]) == 0
+      assert cli(~s[stage --replace #{file2}]) == 0
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act, time: :now, speaker: [speaker1, speaker2, speaker3])
     end
@@ -242,7 +242,7 @@ defmodule Ontogen.CLI.Commands.StageTest do
       |> Dataset.add(named_graph)
       |> RDF.write_file(Stage.default_file())
 
-      assert CLI.main(~w[stage --update #{file}]) == 0
+      assert cli(~s[stage --update #{file}]) == 0
 
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act)
@@ -257,7 +257,7 @@ defmodule Ontogen.CLI.Commands.StageTest do
 
       File.touch(Stage.default_file())
 
-      assert CLI.main(~w[stage --update #{file}]) == 0
+      assert cli(~s[stage --update #{file}]) == 0
 
       assert Stage.changeset() == Changeset.new!(update: graph)
       assert {:ok, speech_act} = Stage.speech_act_description()
@@ -269,17 +269,14 @@ defmodule Ontogen.CLI.Commands.StageTest do
       file = "dataset.trig"
       Dataset.new() |> Dataset.add(graph, graph: EX.Graph) |> RDF.write_file!(file)
 
-      assert {1, log} =
-               with_io(fn ->
-                 CLI.main(~w[stage --add #{file}])
-               end)
+      assert {1, log} = capture_cli(~s[stage --add #{file}])
 
       assert log =~
                "Invalid change file #{file}. Named graphs are not supported, yet."
 
       Dataset.new(graph) |> RDF.write_file!(file, force: true)
 
-      assert CLI.main(~w[stage --add #{file}]) == 0
+      assert cli(~s[stage --add #{file}]) == 0
 
       assert Stage.changeset() == Changeset.new!(add: graph)
     end

@@ -6,10 +6,7 @@ defmodule Ontogen.CLI.Commands.LogTest do
   import Ontogen.IdUtils
 
   test "with empty repository" do
-    assert {1, log} =
-             with_io(fn ->
-               CLI.main(~w[log])
-             end)
+    assert {1, log} = capture_cli(~s[log])
 
     assert log =~ "Repository #{Ontogen.repository().__id__} does not have any commits yet"
   end
@@ -24,24 +21,15 @@ defmodule Ontogen.CLI.Commands.LogTest do
       \e\[33m4dba63ae4e\e\[0m - Initial commit \e\[32m\(\d+ .+\)\e\[0m \e\[1m\e\[34m<John Doe john\.doe@example\.com>\e\[0m
       """m
 
-    assert {0, log} =
-             with_io(fn ->
-               CLI.main(~w[log])
-             end)
+    assert {0, log} = capture_cli(~s[log])
 
     assert log =~ colored_output
 
-    assert {0, log} =
-             with_io(fn ->
-               CLI.main(~w[log --color])
-             end)
+    assert {0, log} = capture_cli(~s[log --color])
 
     assert log =~ colored_output
 
-    assert {0, log} =
-             with_io(fn ->
-               CLI.main(~w[log --no-color])
-             end)
+    assert {0, log} = capture_cli(~s[log --no-color])
 
     assert log =~ ~r"""
            478eaac96b - Third commit \(\d+ .+\) <John Doe john\.doe@example\.com>
@@ -53,10 +41,7 @@ defmodule Ontogen.CLI.Commands.LogTest do
   test "format option" do
     [third, second, first] = init_history()
 
-    assert {0, log} =
-             with_io(fn ->
-               CLI.main(~w[log --format raw])
-             end)
+    assert {0, log} = capture_cli(~s[log --format raw])
 
     assert log ==
              """
@@ -87,9 +72,7 @@ defmodule Ontogen.CLI.Commands.LogTest do
     [third, second, first] = init_history()
 
     assert {0, log} =
-             with_io(fn ->
-               CLI.main(~w[log --no-color --format oneline #{hash_from_iri(first.__id__)}..head])
-             end)
+             capture_cli(~s[log --no-color --format oneline #{hash_from_iri(first.__id__)}..head])
 
     assert log ==
              """
@@ -98,11 +81,9 @@ defmodule Ontogen.CLI.Commands.LogTest do
              """
 
     assert {0, log} =
-             with_io(fn ->
-               CLI.main(
-                 ~w[log --no-color --format oneline #{hash_from_iri(second.__id__)}~1..head~1]
-               )
-             end)
+             capture_cli(
+               ~s[log --no-color --format oneline #{hash_from_iri(second.__id__)}~1..head~1]
+             )
 
     assert log ==
              """
@@ -113,10 +94,7 @@ defmodule Ontogen.CLI.Commands.LogTest do
   test "resource filter" do
     [_third, second, _first] = init_history()
 
-    assert {0, log} =
-             with_io(fn ->
-               CLI.main(~w[log --no-color --format oneline --resource #{EX.s2()}])
-             end)
+    assert {0, log} = capture_cli(~s[log --no-color --format oneline --resource #{EX.s2()}])
 
     assert log ==
              """
@@ -127,10 +105,7 @@ defmodule Ontogen.CLI.Commands.LogTest do
   test "changeset format flags" do
     [third, second, first] = init_history()
 
-    assert {0, log} =
-             with_io(fn ->
-               CLI.main(~w[log --format short --no-color --stat])
-             end)
+    assert {0, log} = capture_cli(~s[log --format short --no-color --stat])
 
     assert log ==
              """
@@ -161,10 +136,7 @@ defmodule Ontogen.CLI.Commands.LogTest do
               1 resources changed, 1 insertions(+)
              """
 
-    assert {0, log} =
-             with_io(fn ->
-               CLI.main(~w[log --format medium --no-color --resource-only --shortstat])
-             end)
+    assert {0, log} = capture_cli(~s[log --format medium --no-color --resource-only --shortstat])
 
     assert log ==
              """
@@ -201,10 +173,7 @@ defmodule Ontogen.CLI.Commands.LogTest do
               1 resources changed, 1 insertions(+)
              """
 
-    assert {0, log} =
-             with_io(fn ->
-               CLI.main(~w[log --no-color --changes --format oneline])
-             end)
+    assert {0, log} = capture_cli(~s[log --no-color --changes --format oneline])
 
     assert log ==
              """
@@ -234,9 +203,7 @@ defmodule Ontogen.CLI.Commands.LogTest do
              """
 
     assert {0, log} =
-             with_io(fn ->
-               CLI.main(~w[log --no-color --format short --speech-changes --effective-changes])
-             end)
+             capture_cli(~s[log --no-color --format short --speech-changes --effective-changes])
 
     assert log ==
              """
@@ -299,10 +266,7 @@ defmodule Ontogen.CLI.Commands.LogTest do
   test "order flags" do
     [third, second, first] = init_history()
 
-    assert {0, log} =
-             with_io(fn ->
-               CLI.main(~w[log --no-color --format oneline --reverse])
-             end)
+    assert {0, log} = capture_cli(~s[log --no-color --format oneline --reverse])
 
     assert log ==
              """
@@ -311,10 +275,7 @@ defmodule Ontogen.CLI.Commands.LogTest do
              #{hash_from_iri(third.__id__)} Third commit
              """
 
-    assert {0, log} =
-             with_io(fn ->
-               CLI.main(~w[log --no-color --format oneline --date-order])
-             end)
+    assert {0, log} = capture_cli(~s[log --no-color --format oneline --date-order])
 
     assert log ==
              """
@@ -323,10 +284,7 @@ defmodule Ontogen.CLI.Commands.LogTest do
              #{hash_from_iri(third.__id__)} Third commit
              """
 
-    assert {0, log} =
-             with_io(fn ->
-               CLI.main(~w[log --no-color --format oneline --date-order --reverse])
-             end)
+    assert {0, log} = capture_cli(~s[log --no-color --format oneline --date-order --reverse])
 
     assert log ==
              """
@@ -336,9 +294,7 @@ defmodule Ontogen.CLI.Commands.LogTest do
              """
 
     assert {0, log} =
-             with_io(fn ->
-               CLI.main(~w[log --no-color --format oneline --author-date-order --reverse])
-             end)
+             capture_cli(~s[log --no-color --format oneline --author-date-order --reverse])
 
     assert log ==
              """
@@ -349,17 +305,11 @@ defmodule Ontogen.CLI.Commands.LogTest do
   end
 
   test "invalid option combinations" do
-    assert {1, log} =
-             with_io(fn ->
-               CLI.main(~w[log --color --no-color])
-             end)
+    assert {1, log} = capture_cli(~s[log --color --no-color])
 
     assert log =~ "both flags --color and --no-color set"
 
-    assert {1, log} =
-             with_io(fn ->
-               CLI.main(~w[log --date-order --author-date-order --format oneline])
-             end)
+    assert {1, log} = capture_cli(~s[log --date-order --author-date-order --format oneline])
 
     assert log =~ "both flags --date-order and --author-date-order set"
   end

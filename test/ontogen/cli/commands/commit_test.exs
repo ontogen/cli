@@ -9,18 +9,15 @@ defmodule Ontogen.CLI.Commands.CommitTest do
   test "with pre-staged changes and defaults" do
     {graph, file} = graph_file([1, 2])
 
-    message = "Foo"
+    message = "Initial commit"
 
-    assert CLI.main(
-             ~w[add #{file} --created-by #{id(:agent)} --created-at #{DateTime.to_iso8601(datetime())}]
+    assert cli(
+             ~s[add #{file} --created-by #{id(:agent)} --created-at #{DateTime.to_iso8601(datetime())}]
            ) == 0
 
     assert File.exists?(Stage.default_file())
 
-    assert {0, log} =
-             with_io(fn ->
-               CLI.main(~w[commit --message #{message}])
-             end)
+    assert {0, log} = capture_cli(~s[commit --message "#{message}"])
 
     refute File.exists?(Stage.default_file())
 
@@ -42,17 +39,15 @@ defmodule Ontogen.CLI.Commands.CommitTest do
 
     message = "Foo"
 
-    assert CLI.main(~w[update #{file} --created-at #{DateTime.to_iso8601(datetime(-1, :hour))}]) ==
+    assert cli(~s[update #{file} --created-at #{DateTime.to_iso8601(datetime(-1, :hour))}]) ==
              0
 
     assert File.exists?(Stage.default_file())
 
     assert {0, log} =
-             with_io(fn ->
-               CLI.main(
-                 ~w[commit --message #{message} --committed-by #{id(:agent)} --committed-at #{DateTime.to_iso8601(datetime())}]
-               )
-             end)
+             capture_cli(
+               ~s[commit --message #{message} --committed-by #{id(:agent)} --committed-at #{DateTime.to_iso8601(datetime())}]
+             )
 
     refute File.exists?(Stage.default_file())
 
@@ -76,11 +71,9 @@ defmodule Ontogen.CLI.Commands.CommitTest do
     refute File.exists?(Stage.default_file())
 
     assert {0, log} =
-             with_io(fn ->
-               CLI.main(
-                 ~w[commit --add #{file} --created-by #{id(:agent)} --created-at #{DateTime.to_iso8601(datetime())} --message #{message}]
-               )
-             end)
+             capture_cli(
+               ~s[commit --add #{file} --created-by #{id(:agent)} --created-at #{DateTime.to_iso8601(datetime())} --message #{message}]
+             )
 
     refute File.exists?(Stage.default_file())
 
@@ -98,10 +91,7 @@ defmodule Ontogen.CLI.Commands.CommitTest do
   end
 
   test "no stage file" do
-    assert {1, log} =
-             with_io(fn ->
-               CLI.main(~w[commit --message Missing])
-             end)
+    assert {1, log} = capture_cli(~s[commit --message Missing])
 
     assert log =~ "no stage file found"
   end
@@ -109,10 +99,7 @@ defmodule Ontogen.CLI.Commands.CommitTest do
   test "empty changeset" do
     File.touch(Stage.default_file())
 
-    assert {1, log} =
-             with_io(fn ->
-               CLI.main(~w[commit --message Nothing])
-             end)
+    assert {1, log} = capture_cli(~s[commit --message Nothing])
 
     assert log =~ "empty stage"
   end
@@ -120,28 +107,19 @@ defmodule Ontogen.CLI.Commands.CommitTest do
   test "no effective changes" do
     {_graph, file} = graph_file([1, 2])
 
-    assert CLI.main(~w[add #{file}]) == 0
-
-    assert {0, _} =
-             with_io(fn ->
-               CLI.main(~w[commit --message Commit1])
-             end)
-
-    assert CLI.main(~w[add #{file}]) == 0
-
-    assert {1, log} =
-             with_io(fn ->
-               CLI.main(~w[commit --message Commit2])
-             end)
+    assert cli(~s[add #{file}]) == 0
+    assert {0, _} = capture_cli(~s[commit --message Commit1])
+    assert cli(~s[add #{file}]) == 0
+    assert {1, log} = capture_cli(~s[commit --message Commit2])
 
     assert log =~ "No effective changes."
   end
 
-  test "additional statements in stage file are stored in the PROV graph?" do
+  test "additional statements in stage file are stored in the PROV graph" do
     {graph, file} = graph_file([1, 2])
 
-    assert CLI.main(
-             ~w[add #{file} --created-by #{id(:agent)} --created-at #{DateTime.to_iso8601(datetime())}]
+    assert cli(
+             ~s[add #{file} --created-by #{id(:agent)} --created-at #{DateTime.to_iso8601(datetime())}]
            ) == 0
 
     stage = Stage.load!(Stage.default_file())
@@ -152,10 +130,7 @@ defmodule Ontogen.CLI.Commands.CommitTest do
     |> Dataset.add(statement(1))
     |> RDF.write_file!(Stage.default_file(), force: true)
 
-    assert {0, _log} =
-             with_io(fn ->
-               CLI.main(~w[commit --message Foo])
-             end)
+    assert {0, _log} = capture_cli(~s[commit --message Foo])
 
     assert {:ok, [%Ontogen.Commit{} = commit]} = Ontogen.dataset_history()
     assert Ontogen.Proposition.graph(commit.add) == graph

@@ -3,11 +3,10 @@ defmodule Ontogen.CLI.Commands.InitTest do
 
   doctest Ontogen.CLI.Commands.Init
 
-  alias Ontogen.{CLI, Repository}
+  alias Ontogen.Repository
 
   import Ontogen.CLI.TestHelper
   import Ontogen.CLI.Helper
-  import ExUnit.CaptureIO
 
   setup do
     cwd = File.cwd!()
@@ -27,10 +26,7 @@ defmodule Ontogen.CLI.Commands.InitTest do
   @valid_store_opts "--query-url http://localhost:7879/query --update-url http://localhost:7879/update --graph-store-url http://localhost:7879/store"
 
   test "with explicitly specified repo URIs and store endpoints", %{dir: dir} do
-    assert {0, log} =
-             with_io(fn ->
-               CLI.main(~w[init #{@valid_repo_opts} #{@valid_store_opts}])
-             end)
+    assert {0, log} = capture_cli(~s[init #{@valid_repo_opts} #{@valid_store_opts}])
 
     assert log =~ "Initialized empty Ontogen repository #{@repo_id} in"
 
@@ -51,7 +47,7 @@ defmodule Ontogen.CLI.Commands.InitTest do
   end
 
   test "without local and global store config" do
-    assert {1, log} = with_io(fn -> CLI.main(~w[init #{@valid_repo_opts}]) end)
+    assert {1, log} = capture_cli(~s[init #{@valid_repo_opts}])
 
     assert log =~
              "No store options provided for local configuration. These options are required as no store is defined in the global configuration."
@@ -62,10 +58,7 @@ defmodule Ontogen.CLI.Commands.InitTest do
     File.cp!(@complete_config, Ontogen.Config.path(:system))
     :ok = reboot_ontogen()
 
-    assert {0, log} =
-             with_io(fn ->
-               CLI.main(~w[init #{@valid_repo_opts}])
-             end)
+    assert {0, log} = capture_cli(~s[init #{@valid_repo_opts}])
 
     assert log =~ "Initialized empty Ontogen repository #{@repo_id} in"
 
@@ -87,11 +80,9 @@ defmodule Ontogen.CLI.Commands.InitTest do
     custom_dir = Path.join(tmp_dir!(), "custom")
 
     assert {0, log} =
-             with_io(fn ->
-               CLI.main(
-                 ~w[init #{@valid_repo_opts} #{@valid_store_opts} --directory #{custom_dir}]
-               )
-             end)
+             capture_cli(
+               ~s[init #{@valid_repo_opts} #{@valid_store_opts} --directory #{custom_dir}]
+             )
 
     assert log =~ "Initialized empty Ontogen repository #{@repo_id} in"
 
@@ -113,10 +104,7 @@ defmodule Ontogen.CLI.Commands.InitTest do
     dir |> Path.join(".ontogen") |> File.mkdir!()
     dir |> Path.join(".ontogen/repo") |> File.touch!()
 
-    assert {1, log} =
-             with_io(fn ->
-               CLI.main(~w[init #{@valid_repo_opts} #{@valid_store_opts}])
-             end)
+    assert {1, log} = capture_cli(~s[init #{@valid_repo_opts} #{@valid_store_opts}])
 
     assert log =~ "Already initialized Ontogen repository found"
   end
