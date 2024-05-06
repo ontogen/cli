@@ -12,6 +12,7 @@ defmodule Ontogen.CLI do
     Ontogen.CLI.Commands.Update,
     Ontogen.CLI.Commands.Replace,
     Ontogen.CLI.Commands.Stage,
+    Ontogen.CLI.Commands.Status,
     Ontogen.CLI.Commands.Commit,
     Ontogen.CLI.Commands.Log
   ]
