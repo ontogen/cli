@@ -136,11 +136,14 @@ defmodule Ontogen.CLI.Commands.LogTest do
               1 resources changed, 1 insertions(+)
              """
 
-    assert {0, log} = capture_cli(~s[log --format medium --no-color --resource-only --shortstat])
+    assert {0, log} =
+             capture_cli(
+               ~s[log --format medium --no-color --resource-only --shortstat --hash-format short]
+             )
 
     assert log ==
              """
-             commit 478eaac96be6bcd4c1ba1016403356214ef799960fc3918636291ea1d78b56ac
+             commit 478eaac96b
              Author: John Doe <john.doe@example.com>
              Date:   Fri May 26 13:02:00 2023 +0000
 
@@ -151,7 +154,7 @@ defmodule Ontogen.CLI.Commands.LogTest do
 
               2 resources changed, 2 insertions(+)
 
-             commit c268c4c7523f03710d3b2a9ca9522d8f67cf180aedb1b885abf0454c7b29581f
+             commit c268c4c752
              Author: John Doe <john.doe@example.com>
              Date:   Fri May 26 13:01:58 2023 +0000
 
@@ -162,7 +165,7 @@ defmodule Ontogen.CLI.Commands.LogTest do
 
               2 resources changed, 1 insertions(+), 1 deletions(-)
 
-             commit 4dba63ae4ec4ee74a58eecab21157b84263efe00518ff443730b21856d949804
+             commit 4dba63ae4e
              Author: John Doe <john.doe@example.com>
              Date:   Fri May 26 13:02:01 2023 +0000
 

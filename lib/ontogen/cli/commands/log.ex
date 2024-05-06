@@ -138,7 +138,7 @@ defmodule Ontogen.CLI.Commands.Log do
   defp set_hash_format(opts, %{hash_format: nil}), do: opts
 
   defp set_hash_format(opts, %{hash_format: hash_format}),
-    do: Keyword.put(opts, :hash_format, hash_format)
+    do: Keyword.put(opts, :hash_format, String.to_atom(hash_format))
 
   defp set_order(opts, %{commit_date_order: false, author_date_order: false, reverse: reverse}),
     do: Keyword.put(opts, :order, if(reverse, do: :asc, else: :desc))
