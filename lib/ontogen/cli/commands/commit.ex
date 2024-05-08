@@ -38,8 +38,6 @@ defmodule Ontogen.CLI.Commands.Commit do
         ],
     flags: []
 
-  import Ontogen.IdUtils, only: [to_hash: 1]
-
   @impl true
   def call(%{stage: file}, options, _flags, []) do
     stage_file = file || Stage.default_file()
@@ -68,27 +66,7 @@ defmodule Ontogen.CLI.Commands.Commit do
              additional_prov_metadata: metadata
            ) do
       Stage.reset(stage_file)
-      success(commit_info(commit))
+      success(Helper.commit_info(commit))
     end
-  end
-
-  defp commit_info(commit) do
-    [first_line | _] = String.split(commit.message, "\n", parts: 2)
-    root_commit = if Ontogen.Commit.root?(commit), do: "(root-commit) "
-
-    insertions_count =
-      ((commit.add && RTC.Compound.triple_count(commit.add.statements)) || 0) +
-        ((commit.update && RTC.Compound.triple_count(commit.update.statements)) || 0) +
-        ((commit.replace && RTC.Compound.triple_count(commit.replace.statements)) || 0)
-
-    deletions_count = (commit.remove && RTC.Compound.triple_count(commit.remove.statements)) || 0
-
-    overwrites_count =
-      (commit.overwrite && RTC.Compound.triple_count(commit.overwrite.statements)) || 0
-
-    """
-    [#{root_commit}#{to_hash(commit)}] #{first_line}
-     #{insertions_count} insertions, #{deletions_count} deletions, #{overwrites_count} overwrites
-    """
   end
 end

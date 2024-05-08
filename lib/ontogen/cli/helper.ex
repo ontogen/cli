@@ -1,6 +1,9 @@
 defmodule Ontogen.CLI.Helper do
   alias RDF.XSD
 
+  import Ontogen.Utils
+  import Ontogen.IdUtils, only: [to_hash: 1]
+
   @message_category_colors %{
     success: :green,
     info: :blue,
@@ -81,5 +84,24 @@ defmodule Ontogen.CLI.Helper do
     after
       Logger.configure(level: current_level)
     end
+  end
+
+  def commit_info(commit) do
+    root_commit = if Ontogen.Commit.root?(commit), do: "(root-commit) "
+
+    insertions_count =
+      ((commit.add && RTC.Compound.triple_count(commit.add.statements)) || 0) +
+        ((commit.update && RTC.Compound.triple_count(commit.update.statements)) || 0) +
+        ((commit.replace && RTC.Compound.triple_count(commit.replace.statements)) || 0)
+
+    deletions_count = (commit.remove && RTC.Compound.triple_count(commit.remove.statements)) || 0
+
+    overwrites_count =
+      (commit.overwrite && RTC.Compound.triple_count(commit.overwrite.statements)) || 0
+
+    """
+    [#{root_commit}#{to_hash(commit)}] #{first_line(commit.message)}
+     #{insertions_count} insertions, #{deletions_count} deletions, #{overwrites_count} overwrites
+    """
   end
 end

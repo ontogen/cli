@@ -14,6 +14,7 @@ defmodule Ontogen.CLI do
     Ontogen.CLI.Commands.Stage,
     Ontogen.CLI.Commands.Status,
     Ontogen.CLI.Commands.Commit,
+    Ontogen.CLI.Commands.Revert,
     Ontogen.CLI.Commands.Log
   ]
 
