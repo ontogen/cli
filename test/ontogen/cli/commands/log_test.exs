@@ -8,17 +8,17 @@ defmodule Ontogen.CLI.Commands.LogTest do
   test "with empty repository" do
     assert {1, log} = capture_cli(~s[log])
 
-    assert log =~ "Repository #{Ontogen.repository().__id__} does not have any commits yet"
+    assert log =~ "Repository #{Ontogen.repository!().__id__} does not have any commits yet"
   end
 
   test "default format" do
-    init_history()
+    [third, second, first] = init_history()
 
     colored_output =
       ~r"""
-      \e\[33m478eaac96b\e\[0m - Third commit \e\[32m\(\d+ .+\)\e\[0m \e\[1m\e\[34m<John Doe john\.doe@example\.com>\e\[0m
-      \e\[33mc268c4c752\e\[0m - Second commit \e\[32m\(\d+ .+\)\e\[0m \e\[1m\e\[34m<John Doe john\.doe@example\.com>\e\[0m
-      \e\[33m4dba63ae4e\e\[0m - Initial commit \e\[32m\(\d+ .+\)\e\[0m \e\[1m\e\[34m<John Doe john\.doe@example\.com>\e\[0m
+      \e\[33m#{short_hash_from_iri(third.__id__)}\e\[0m - Third commit \e\[32m\(\d+ .+\)\e\[0m \e\[1m\e\[34m<Jane Doe jane\.doe@example\.com>\e\[0m
+      \e\[33m#{short_hash_from_iri(second.__id__)}\e\[0m - Second commit \e\[32m\(\d+ .+\)\e\[0m \e\[1m\e\[34m<Jane Doe jane\.doe@example\.com>\e\[0m
+      \e\[33m#{short_hash_from_iri(first.__id__)}\e\[0m - Initial commit \e\[32m\(\d+ .+\)\e\[0m \e\[1m\e\[34m<Jane Doe jane\.doe@example\.com>\e\[0m
       """m
 
     assert {0, log} = capture_cli(~s[log])
@@ -32,9 +32,9 @@ defmodule Ontogen.CLI.Commands.LogTest do
     assert {0, log} = capture_cli(~s[log --no-color])
 
     assert log =~ ~r"""
-           478eaac96b - Third commit \(\d+ .+\) <John Doe john\.doe@example\.com>
-           c268c4c752 - Second commit \(\d+ .+\) <John Doe john\.doe@example\.com>
-           4dba63ae4e - Initial commit \(\d+ .+\) <John Doe john\.doe@example\.com>
+           #{short_hash_from_iri(third.__id__)} - Third commit \(\d+ .+\) <Jane Doe jane\.doe@example\.com>
+           #{short_hash_from_iri(second.__id__)} - Second commit \(\d+ .+\) <Jane Doe jane\.doe@example\.com>
+           #{short_hash_from_iri(first.__id__)} - Initial commit \(\d+ .+\) <Jane Doe jane\.doe@example\.com>
            """m
   end
 
@@ -46,23 +46,23 @@ defmodule Ontogen.CLI.Commands.LogTest do
     assert log ==
              """
              \e[33mcommit #{hash_from_iri(third.__id__)}\e[0m
-             parent c268c4c7523f03710d3b2a9ca9522d8f67cf180aedb1b885abf0454c7b29581f
+             parent #{hash_from_iri(second.__id__)}
              update 7060ebefffd8f8b899c7c44703878b5b32ae833efc7602050782c5eae86c4887
-             committer <http://example.com/Agent/john_doe> 1685106117 +0000
+             committer <#{Ontogen.Config.agent_id()}> 1685106117 +0000
 
              Third commit
 
              \e[33mcommit #{hash_from_iri(second.__id__)}\e[0m
-             parent 4dba63ae4ec4ee74a58eecab21157b84263efe00518ff443730b21856d949804
+             parent #{hash_from_iri(first.__id__)}
              add f0631b99ac7b6fb265b68867106f9493154543db0d1b8ccadc820b14a6a9dd2c
              remove 979ebda022992a4e5d65edddb1087b9eac54b71e688c34e69c3a99ac25bfa52e
-             committer <http://example.com/Agent/john_doe> 1685106119 +0000
+             committer <#{Ontogen.Config.agent_id()}> 1685106119 +0000
 
              Second commit
 
              \e[33mcommit #{hash_from_iri(first.__id__)}\e[0m
              add 979ebda022992a4e5d65edddb1087b9eac54b71e688c34e69c3a99ac25bfa52e
-             committer <http://example.com/Agent/john_doe> 1685106121 +0000
+             committer <#{Ontogen.Config.agent_id()}> 1685106121 +0000
 
              Initial commit
              """
@@ -109,8 +109,8 @@ defmodule Ontogen.CLI.Commands.LogTest do
 
     assert log ==
              """
-             commit 478eaac96be6bcd4c1ba1016403356214ef799960fc3918636291ea1d78b56ac
-             Author: John Doe <john.doe@example.com>
+             commit #{hash_from_iri(third.__id__)}
+             Author: Jane Doe <jane.doe@example.com>
 
              Third commit
 
@@ -118,8 +118,8 @@ defmodule Ontogen.CLI.Commands.LogTest do
               http://example.com/s4 | 1 +
               2 resources changed, 2 insertions(+)
 
-             commit c268c4c7523f03710d3b2a9ca9522d8f67cf180aedb1b885abf0454c7b29581f
-             Author: John Doe <john.doe@example.com>
+             commit #{hash_from_iri(second.__id__)}
+             Author: Jane Doe <jane.doe@example.com>
 
              Second commit
 
@@ -127,8 +127,8 @@ defmodule Ontogen.CLI.Commands.LogTest do
               http://example.com/s2 | 1 +
               2 resources changed, 1 insertions(+), 1 deletions(-)
 
-             commit 4dba63ae4ec4ee74a58eecab21157b84263efe00518ff443730b21856d949804
-             Author: John Doe <john.doe@example.com>
+             commit #{hash_from_iri(first.__id__)}
+             Author: Jane Doe <jane.doe@example.com>
 
              Initial commit
 
@@ -143,8 +143,8 @@ defmodule Ontogen.CLI.Commands.LogTest do
 
     assert log ==
              """
-             commit 478eaac96b
-             Author: John Doe <john.doe@example.com>
+             commit #{short_hash_from_iri(third.__id__)}
+             Author: Jane Doe <jane.doe@example.com>
              Date:   Fri May 26 13:02:00 2023 +0000
 
              Third commit
@@ -154,8 +154,8 @@ defmodule Ontogen.CLI.Commands.LogTest do
 
               2 resources changed, 2 insertions(+)
 
-             commit c268c4c752
-             Author: John Doe <john.doe@example.com>
+             commit #{short_hash_from_iri(second.__id__)}
+             Author: Jane Doe <jane.doe@example.com>
              Date:   Fri May 26 13:01:58 2023 +0000
 
              Second commit
@@ -165,8 +165,8 @@ defmodule Ontogen.CLI.Commands.LogTest do
 
               2 resources changed, 1 insertions(+), 1 deletions(-)
 
-             commit 4dba63ae4e
-             Author: John Doe <john.doe@example.com>
+             commit #{short_hash_from_iri(first.__id__)}
+             Author: Jane Doe <jane.doe@example.com>
              Date:   Fri May 26 13:02:01 2023 +0000
 
              Initial commit
@@ -210,8 +210,8 @@ defmodule Ontogen.CLI.Commands.LogTest do
 
     assert log ==
              """
-             commit 478eaac96be6bcd4c1ba1016403356214ef799960fc3918636291ea1d78b56ac
-             Author: John Doe <john.doe@example.com>
+             commit #{hash_from_iri(third.__id__)}
+             Author: Jane Doe <jane.doe@example.com>
 
              Third commit
 
@@ -232,8 +232,8 @@ defmodule Ontogen.CLI.Commands.LogTest do
              ±     <http://example.com/p4> <http://example.com/o4> .
 
 
-             commit c268c4c7523f03710d3b2a9ca9522d8f67cf180aedb1b885abf0454c7b29581f
-             Author: John Doe <john.doe@example.com>
+             commit #{hash_from_iri(second.__id__)}
+             Author: Jane Doe <jane.doe@example.com>
 
              Second commit
 
@@ -251,8 +251,8 @@ defmodule Ontogen.CLI.Commands.LogTest do
              +     <http://example.com/p2> <http://example.com/o2> .
 
 
-             commit 4dba63ae4ec4ee74a58eecab21157b84263efe00518ff443730b21856d949804
-             Author: John Doe <john.doe@example.com>
+             commit #{hash_from_iri(first.__id__)}
+             Author: Jane Doe <jane.doe@example.com>
 
              Initial commit
 

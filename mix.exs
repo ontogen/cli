@@ -52,8 +52,7 @@ defmodule Ontogen.CLI.MixProject do
       {:optimus, "~> 0.5"},
       {:owl, "~> 0.9"},
       {:burrito, "~> 1.0"},
-      {:hackney, "~> 1.17"},
-      {:briefly, "~> 0.5", only: :test}
+      {:hackney, "~> 1.17"}
     ]
   end
 

@@ -1,5 +1,5 @@
 defmodule Ontogen.CLI.Commands.StageTest do
-  use Ontogen.CLI.RepositoryCase
+  use Ontogen.CLI.Case
 
   doctest Ontogen.CLI.Commands.Add
   doctest Ontogen.CLI.Commands.Update

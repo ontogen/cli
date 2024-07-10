@@ -7,6 +7,7 @@ defmodule Ontogen.CLI do
 
   @commands [
     Ontogen.CLI.Commands.Init,
+    Ontogen.CLI.Commands.Setup,
     Ontogen.CLI.Commands.Add,
     Ontogen.CLI.Commands.Remove,
     Ontogen.CLI.Commands.Update,

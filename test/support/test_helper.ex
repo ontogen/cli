@@ -1,15 +1,8 @@
 defmodule Ontogen.CLI.TestHelper do
-  import ExUnit.Assertions
-
-  import ExUnit.CaptureLog
   import ExUnit.CaptureIO
 
-  def configless_ontogen(_) do
-    capture_log(fn -> Application.stop(:ontogen) end)
-    :ok = Application.start(:ontogen)
-    refute Ontogen.CLI.Helper.config_available?()
-    :ok
-  end
+  @test_config_path Path.absname("test/data/config")
+  def test_config_path, do: @test_config_path
 
   def capture_cli(args) do
     with_io(fn -> cli(args) end)
@@ -19,13 +12,5 @@ defmodule Ontogen.CLI.TestHelper do
     args
     |> OptionParser.split()
     |> Ontogen.CLI.main()
-  end
-
-  def tmp_dir! do
-    Briefly.create!(type: :directory)
-  end
-
-  def cd_tmp_dir! do
-    tap(tmp_dir!(), &File.cd!/1)
   end
 end

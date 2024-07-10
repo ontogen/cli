@@ -8,7 +8,7 @@ defmodule Ontogen.CLI.Commands.RevertTest do
   test "with empty repository" do
     assert {1, log} = capture_cli(~s[revert HEAD])
 
-    assert log =~ "Repository #{Ontogen.repository().__id__} does not have any commits yet"
+    assert log =~ "Repository #{Ontogen.repository!().__id__} does not have any commits yet"
   end
 
   test "last commit with defaults" do
@@ -25,7 +25,7 @@ defmodule Ontogen.CLI.Commands.RevertTest do
     assert {:ok, [%Ontogen.Commit{} = revert | ^history]} = Ontogen.dataset_history()
 
     assert DateTime.diff(revert.time, DateTime.utc_now(), :second) <= 1
-    assert revert.committer == Ontogen.Config.user()
+    assert revert.committer == Ontogen.Config.user!()
     assert revert.message =~ message
 
     refute revert.speech_act

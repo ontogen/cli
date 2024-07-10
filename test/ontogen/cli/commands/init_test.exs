@@ -1,126 +1,86 @@
 defmodule Ontogen.CLI.Commands.InitTest do
-  use Ontogen.CLI.StoreCase, async: false
+  use Ontogen.CLI.Case
 
   doctest Ontogen.CLI.Commands.Init
 
-  alias Ontogen.Repository
+  alias Ontogen.Config.Loader
 
-  import Ontogen.CLI.TestHelper
-  import Ontogen.CLI.Helper
+  @moduletag init: false
 
-  setup do
-    cwd = File.cwd!()
-    tmp_dir = cd_tmp_dir!()
-    on_exit(fn -> File.cd!(cwd) end)
+  test "without arguments", %{tmp_dir: dir} do
+    assert {:error, _} = Ontogen.Config.service()
 
-    [dir: tmp_dir]
-  end
+    assert {0, log} = capture_cli(~s[init])
 
-  setup {Ontogen.CLI.TestHelper, :configless_ontogen}
-
-  @repo_id "http://example.repo.com/"
-  @dataset_id "http://example.repo.com/dataset"
-  @prov_graph_id "http://example.repo.com/prov"
-
-  @valid_repo_opts "#{@repo_id} --dataset #{@dataset_id} --prov-graph #{@prov_graph_id}"
-  @valid_store_opts "--query-url http://localhost:7879/query --update-url http://localhost:7879/update --graph-store-url http://localhost:7879/store"
-
-  test "with explicitly specified repo URIs and store endpoints", %{dir: dir} do
-    assert {0, log} = capture_cli(~s[init #{@valid_repo_opts} #{@valid_store_opts}])
-
-    assert log =~ "Initialized empty Ontogen repository #{@repo_id} in"
+    assert log =~ "Initialized empty Ontogen repository"
 
     assert_ontogen_dir(dir)
-    assert config_available?()
 
-    expected_repo =
-      Repository.new!(@repo_id,
-        dataset: Ontogen.Dataset.build!(@dataset_id),
-        prov_graph: Ontogen.ProvGraph.build!(@prov_graph_id)
-      )
-
-    assert Ontogen.repository() == expected_repo
-
-    :ok = reboot_ontogen()
-
-    assert Ontogen.repository() == expected_repo
+    assert {:ok, %Service{store: %Store{}}} = Ontogen.Config.service()
   end
 
-  test "without local and global store config" do
-    assert {1, log} = capture_cli(~s[init #{@valid_repo_opts}])
+  test "when .ontogen directory already exists" do
+    File.mkdir_p!(".ontogen")
 
-    assert log =~
-             "No store options provided for local configuration. These options are required as no store is defined in the global configuration."
-  end
-
-  @complete_config Path.expand("test/data/config/complete_config.ttl")
-  test "without local store config, but with global store config", %{dir: dir} do
-    File.cp!(@complete_config, Ontogen.Config.path(:system))
-    :ok = reboot_ontogen()
-
-    assert {0, log} = capture_cli(~s[init #{@valid_repo_opts}])
-
-    assert log =~ "Initialized empty Ontogen repository #{@repo_id} in"
-
-    assert_ontogen_dir(dir, with_config: false)
-    assert config_available?()
-
-    :ok = reboot_ontogen()
-
-    assert Ontogen.repository() ==
-             Repository.new!(@repo_id,
-               dataset: Ontogen.Dataset.build!(@dataset_id),
-               prov_graph: Ontogen.ProvGraph.build!(@prov_graph_id)
-             )
-  after
-    File.rm!(Ontogen.Config.path(:system))
-  end
-
-  test "--directory" do
-    custom_dir = Path.join(tmp_dir!(), "custom")
-
-    assert {0, log} =
-             capture_cli(
-               ~s[init #{@valid_repo_opts} #{@valid_store_opts} --directory #{custom_dir}]
-             )
-
-    assert log =~ "Initialized empty Ontogen repository #{@repo_id} in"
-
-    assert_ontogen_dir(custom_dir)
-    assert config_available?()
-
-    File.cd!(custom_dir)
-
-    :ok = reboot_ontogen()
-
-    assert Ontogen.repository() ==
-             Repository.new!(@repo_id,
-               dataset: Ontogen.Dataset.build!(@dataset_id),
-               prov_graph: Ontogen.ProvGraph.build!(@prov_graph_id)
-             )
-  end
-
-  test "when repository already exists", %{dir: dir} do
-    dir |> Path.join(".ontogen") |> File.mkdir!()
-    dir |> Path.join(".ontogen/repo") |> File.touch!()
-
-    assert {1, log} = capture_cli(~s[init #{@valid_repo_opts} #{@valid_store_opts}])
+    assert {1, log} = capture_cli(~s[init])
 
     assert log =~ "Already initialized Ontogen repository found"
   end
 
-  defp assert_ontogen_dir(dir, opts \\ []) do
-    ontogen_dir = Path.join(dir, ".ontogen")
-    assert File.exists?(ontogen_dir)
+  test "--adapter", %{tmp_dir: dir} do
+    assert {:error, _} = Ontogen.Config.service()
 
-    config = Path.join(ontogen_dir, "test_config.ttl")
+    assert {0, log} = capture_cli(~s[init --adapter Fuseki])
 
-    if Keyword.get(opts, :with_config, true) do
-      assert File.exists?(config)
-    else
-      refute File.exists?(config)
-    end
+    assert log =~ "Initialized empty Ontogen repository"
 
-    assert ontogen_dir |> Path.join("repo") |> File.exists?()
+    assert_ontogen_dir(dir)
+
+    assert {:ok, %Service{store: %Store.Adapters.Fuseki{}}} =
+             Ontogen.Config.service()
+  end
+
+  test "--directory", %{tmp_dir: dir} do
+    assert {:error, _} = Ontogen.Config.service()
+
+    project_dir = "example"
+
+    assert {0, log} = capture_cli(~s[init --directory #{project_dir}])
+
+    assert log =~ "Initialized empty Ontogen repository"
+
+    dir
+    |> Path.join(project_dir)
+    |> File.cd!(fn ->
+      assert_ontogen_dir()
+
+      assert {:ok, %Service{store: %Store{}}} = Ontogen.Config.service()
+    end)
+  end
+
+  test "--template", %{tmp_dir: dir} do
+    assert {:error, _} = Ontogen.Config.service()
+
+    assert {0, log} = capture_cli(~s[init --template #{test_config_path()}])
+
+    assert log =~ "Initialized empty Ontogen repository"
+
+    assert_ontogen_dir(dir)
+
+    assert Loader.load_graph() ==
+             Loader.load_graph(load_path: test_config_path())
+
+    Ontogen.Config.service()
+  end
+
+  defp assert_ontogen_dir, do: File.cwd!() |> assert_ontogen_dir()
+
+  defp assert_ontogen_dir(dir) do
+    config = Path.join(dir, Loader.local_path())
+    assert File.exists?(config)
+    assert File.exists?(Path.join(config, "agent.bog.ttl"))
+    assert File.exists?(Path.join(config, "service.bog.ttl"))
+
+    assert File.exists?(Path.join(dir, Ontogen.Bog.salt_base_path()))
   end
 end

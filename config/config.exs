@@ -3,10 +3,12 @@ import Config
 # Ontogen config ####################################################
 
 config :ontogen,
-  # CAUTION: These paths also determine the paths of the config and repo id file created with the init command
-  local_config_path: ".ontogen/config.ttl",
-  repo_id_file: ".ontogen/repo",
-  allow_configless_mode: true
+  env: Mix.env(),
+  allow_configless_mode: true,
+  config_load_paths: [:local],
+  # CAUTION: These paths also determine the paths of the config files created with the init command
+  local_config_path: ".ontogen/config",
+  salt_path: ".ontogen/.salts"
 
 config :ontogen,
   grax_id_spec: Ontogen.IdSpec

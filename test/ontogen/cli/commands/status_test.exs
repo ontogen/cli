@@ -65,18 +65,22 @@ defmodule Ontogen.CLI.Commands.StatusTest do
   test "with empty repository" do
     {_graph, file} = graph_file([1])
 
-    assert cli(~s[add #{file} --created-at #{DateTime.to_iso8601(datetime())}]) == 0
+    assert cli(
+             ~s[add #{file} --created-at #{DateTime.to_iso8601(datetime())} --created-by #{id(:agent)}]
+           ) == 0
+
     assert {0, log} = capture_cli(~s[status --no-color])
 
     assert log =~
              """
-             speech_act 0ccd1c7cda0f51664fe1932a7f020df62dadbd15180f774e381d0e5748f24d5e
+             speech_act 1e7e3365f92f6c15929c7f6ebe33cf3d4210bb1bd7515f4df64f1bc6dd3494b4
              Source: -
-             Author: <http://example.com/Agent/john_doe>
+             Author: <#{id(:agent)}>
              Date:   Fri May 26 13:02:02 2023 +0000
 
                 <http://example.com/s1>
               +     <http://example.com/p1> <http://example.com/o1> .
+
              """
   end
 
