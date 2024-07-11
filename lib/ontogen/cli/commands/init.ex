@@ -10,7 +10,7 @@ defmodule Ontogen.CLI.Commands.Init do
       store_adapter: [
         value_name: "STORE_ADAPTER",
         long: "--adapter",
-        help: "Name of the store adapter; #{Helper.adapter_types()}",
+        help: "Name of the store adapter",
         parser: :string,
         required: false
       ],
@@ -58,7 +58,7 @@ defmodule Ontogen.CLI.Commands.Init do
   end
 
   defp generate_config(directory, options) do
-    with {:ok, adapter} <- to_adapter(options[:store_adapter]) do
+    with {:ok, adapter} <- Helper.to_adapter(options[:store_adapter]) do
       opts =
         if template = options[:template] do
           [template_dir: template]
@@ -70,18 +70,6 @@ defmodule Ontogen.CLI.Commands.Init do
       directory
       |> Path.join(Ontogen.Config.Loader.local_path())
       |> Generator.generate(opts)
-    end
-  end
-
-  defp to_adapter(nil), do: {:ok, nil}
-  defp to_adapter("generic"), do: {:ok, nil}
-  defp to_adapter("Generic"), do: {:ok, nil}
-
-  defp to_adapter(adapter_name) when is_binary(adapter_name) do
-    if adapter = Ontogen.Store.Adapter.type(adapter_name) do
-      {:ok, adapter}
-    else
-      {:error, "invalid store adapter: #{adapter_name}"}
     end
   end
 end

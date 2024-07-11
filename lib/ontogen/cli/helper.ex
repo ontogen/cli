@@ -1,5 +1,6 @@
 defmodule Ontogen.CLI.Helper do
   alias RDF.XSD
+  alias Ontogen.Store
 
   import Ontogen.Utils
   import Ontogen.IdUtils, only: [to_hash: 1]
@@ -45,15 +46,21 @@ defmodule Ontogen.CLI.Helper do
   def user_id, do: to_string(user_iri())
 
   def adapter_types do
-    "e.g. Oxigraph or Generic"
+    Enum.map_join(Store.adapters(), ", ", &Store.Adapter.type_name/1) <>
+      " or Generic for the generic store adapter"
   end
 
-  def adapter_type(string) do
-    if adapter = Ontogen.Store.Adapter.type(string) do
+  def to_adapter(nil), do: {:ok, nil}
+  def to_adapter("generic"), do: {:ok, nil}
+  def to_adapter("Generic"), do: {:ok, nil}
+  def to_adapter("Store"), do: {:ok, nil}
+
+  def to_adapter(adapter_name) when is_binary(adapter_name) do
+    if adapter = Store.Adapter.type(adapter_name) do
       {:ok, adapter}
     else
       {:error,
-       "invalid store adapter: #{inspect(string)}; available adapters: #{adapter_types()}"}
+       "invalid store adapter: #{inspect(adapter_name)}; available adapters: #{adapter_types()}"}
     end
   end
 
