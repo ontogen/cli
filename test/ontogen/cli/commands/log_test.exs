@@ -206,7 +206,7 @@ defmodule Ontogen.CLI.Commands.LogTest do
              """
 
     assert {0, log} =
-             capture_cli(~s[log --no-color --format short --speech-changes --effective-changes])
+             capture_cli(~s[log --no-color --format short --speech-changes --commit-changes])
 
     assert log ==
              """

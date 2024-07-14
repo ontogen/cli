@@ -50,7 +50,7 @@ defmodule Ontogen.CLI.Commands.Log do
           help: "Show only IRIs of changed resources"
         ],
         changes: [
-          long: "--effective-changes",
+          long: "--commit-changes",
           help:
             "Show the commit changes, i.e. only the effectively required changes of the speech act."
         ],
