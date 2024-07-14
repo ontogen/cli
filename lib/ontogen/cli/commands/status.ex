@@ -18,16 +18,7 @@ defmodule Ontogen.CLI.Commands.Status do
         parser: :string
       ]
     ],
-    flags: [
-      color: [
-        long: "--color",
-        help: "Enforce use of colors"
-      ],
-      no_color: [
-        long: "--no-color",
-        help: "Do not use colors in the output"
-      ]
-    ]
+    flags: color_flags()
 
   @impl true
   def call(%{stage: file}, options, flags, []) do
@@ -76,13 +67,4 @@ defmodule Ontogen.CLI.Commands.Status do
 
   defp set_hash_format(opts, %{hash_format: hash_format}),
     do: Keyword.put(opts, :hash_format, String.to_atom(hash_format))
-
-  defp set_color(opts, %{color: false, no_color: false}),
-    do: Keyword.put(opts, :color, IO.ANSI.enabled?())
-
-  defp set_color(_, %{color: true, no_color: true}),
-    do: raise(ArgumentError, "both flags --color and --no-color set")
-
-  defp set_color(opts, %{color: true}), do: Keyword.put(opts, :color, true)
-  defp set_color(opts, %{no_color: true}), do: Keyword.put(opts, :color, false)
 end

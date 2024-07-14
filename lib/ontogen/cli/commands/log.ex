@@ -34,57 +34,50 @@ defmodule Ontogen.CLI.Commands.Log do
         parser: :string
       ]
     ],
-    flags: [
-      stat: [
-        long: "--stat",
-        help: "Generates a diffstat"
-      ],
-      short_stat: [
-        long: "--shortstat",
-        help:
-          "Output only the last line of the --stat format containing total number of modified resources, as well as number of added and deleted triples."
-      ],
-      resource_only: [
-        long: "--resource-only",
-        help: "Show only IRIs of changed resources"
-      ],
-      changes: [
-        long: "--effective-changes",
-        help:
-          "Show the commit changes, i.e. only the effectively required changes of the speech act."
-      ],
-      speech_changes: [
-        long: "--speech-changes",
-        help: "Show the changes of the speech act."
-      ],
-      combined_changes: [
-        long: "--changes",
-        help:
-          "Show changes of the commit including the ignored statements of the speech act highlighted."
-      ],
-      reverse: [
-        long: "--reverse",
-        help: "Output the commits chosen to be shown in reverse order."
-      ],
-      commit_date_order: [
-        long: "--date-order",
-        help:
-          "Sort commits by descending commit time. Can be combined with --reverse for ascending ordering"
-      ],
-      author_date_order: [
-        long: "--author-date-order",
-        help:
-          "Sort commits by descending speech act time. Can be combined with --reverse for ascending ordering"
-      ],
-      color: [
-        long: "--color",
-        help: "Enforce use of colors"
-      ],
-      no_color: [
-        long: "--no-color",
-        help: "Do not use colors in the output"
-      ]
-    ]
+    flags:
+      [
+        stat: [
+          long: "--stat",
+          help: "Generates a diffstat"
+        ],
+        short_stat: [
+          long: "--shortstat",
+          help:
+            "Output only the last line of the --stat format containing total number of modified resources, as well as number of added and deleted triples."
+        ],
+        resource_only: [
+          long: "--resource-only",
+          help: "Show only IRIs of changed resources"
+        ],
+        changes: [
+          long: "--effective-changes",
+          help:
+            "Show the commit changes, i.e. only the effectively required changes of the speech act."
+        ],
+        speech_changes: [
+          long: "--speech-changes",
+          help: "Show the changes of the speech act."
+        ],
+        combined_changes: [
+          long: "--changes",
+          help:
+            "Show changes of the commit including the ignored statements of the speech act highlighted."
+        ],
+        reverse: [
+          long: "--reverse",
+          help: "Output the commits chosen to be shown in reverse order."
+        ],
+        commit_date_order: [
+          long: "--date-order",
+          help:
+            "Sort commits by descending commit time. Can be combined with --reverse for ascending ordering"
+        ],
+        author_date_order: [
+          long: "--author-date-order",
+          help:
+            "Sort commits by descending speech act time. Can be combined with --reverse for ascending ordering"
+        ]
+      ] ++ color_flags()
 
   @impl true
   def call(%{range: spec}, options, flags, []) do
@@ -151,12 +144,4 @@ defmodule Ontogen.CLI.Commands.Log do
 
   defp set_order(opts, %{author_date_order: true, reverse: reverse}),
     do: Keyword.put(opts, :order, {:speech_time, if(reverse, do: :asc, else: :desc)})
-
-  defp set_color(opts, %{color: false, no_color: false}), do: opts
-
-  defp set_color(_, %{color: true, no_color: true}),
-    do: raise(ArgumentError, "both flags --color and --no-color set")
-
-  defp set_color(opts, %{color: true}), do: Keyword.put(opts, :color, true)
-  defp set_color(opts, %{no_color: true}), do: Keyword.put(opts, :color, false)
 end
