@@ -21,7 +21,7 @@ defmodule Ontogen.CLI.Commands.CommitTest do
 
     refute File.exists?(Stage.default_file())
 
-    assert {:ok, [%Ontogen.Commit{} = commit]} = Ontogen.dataset_history()
+    assert {:ok, [%Ontogen.Commit{} = commit]} = Ontogen.log()
     assert DateTime.diff(commit.time, DateTime.utc_now(), :second) <= 1
     assert commit.committer == user_iri()
     assert commit.message == message
@@ -51,7 +51,7 @@ defmodule Ontogen.CLI.Commands.CommitTest do
 
     refute File.exists?(Stage.default_file())
 
-    assert {:ok, [%Ontogen.Commit{} = commit]} = Ontogen.dataset_history()
+    assert {:ok, [%Ontogen.Commit{} = commit]} = Ontogen.log()
     assert commit.time == datetime()
     assert commit.committer == id(:agent)
     assert commit.message == message
@@ -77,7 +77,7 @@ defmodule Ontogen.CLI.Commands.CommitTest do
 
     refute File.exists?(Stage.default_file())
 
-    assert {:ok, [%Ontogen.Commit{} = commit]} = Ontogen.dataset_history()
+    assert {:ok, [%Ontogen.Commit{} = commit]} = Ontogen.log()
     assert DateTime.diff(commit.time, DateTime.utc_now(), :second) <= 1
     assert commit.committer == user_iri()
     assert commit.message == message
@@ -132,7 +132,7 @@ defmodule Ontogen.CLI.Commands.CommitTest do
 
     assert {0, _log} = capture_cli(~s[commit --message Foo])
 
-    assert {:ok, [%Ontogen.Commit{} = commit]} = Ontogen.dataset_history()
+    assert {:ok, [%Ontogen.Commit{} = commit]} = Ontogen.log()
     assert Ontogen.Proposition.graph(commit.add) == graph
 
     assert commit.speech_act.speaker == id(:agent)
@@ -143,7 +143,7 @@ defmodule Ontogen.CLI.Commands.CommitTest do
              |> RDF.type(Og.SpeechAct)
              |> EX.p(EX.O)
 
-    assert Ontogen.prov_graph!() |> Graph.include?(statement(1))
+    assert Ontogen.history!() |> Graph.include?(statement(1))
   end
   end
 end

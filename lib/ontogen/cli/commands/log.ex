@@ -95,23 +95,18 @@ defmodule Ontogen.CLI.Commands.Log do
   defp range(spec), do: Commit.Range.parse(spec)
 
   defp formatted_log(range, options, flags) do
-    opts =
-      [
-        range: range,
-        type: :formatted,
-        stream: true
-      ]
-      |> set_format(options)
-      |> set_hash_format(options)
-      |> set_changeset_formats(flags)
-      |> set_color(flags)
-      |> set_order(flags)
-
-    if resource = options[:resource] do
-      Ontogen.resource_history(resource, opts)
-    else
-      Ontogen.dataset_history(opts)
-    end
+    [
+      range: range,
+      type: :formatted,
+      stream: true
+    ]
+    |> set_format(options)
+    |> set_hash_format(options)
+    |> set_changeset_formats(flags)
+    |> set_color(flags)
+    |> set_order(flags)
+    |> set_subject(options)
+    |> Ontogen.log()
   end
 
   defp set_format(opts, %{format: nil}), do: opts
@@ -144,4 +139,9 @@ defmodule Ontogen.CLI.Commands.Log do
 
   defp set_order(opts, %{author_date_order: true, reverse: reverse}),
     do: Keyword.put(opts, :order, {:speech_time, if(reverse, do: :asc, else: :desc)})
+
+  defp set_subject(opts, %{resource: nil}), do: opts
+
+  defp set_subject(opts, %{resource: resource}),
+    do: Keyword.put(opts, :resource, resource)
 end

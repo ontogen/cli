@@ -22,7 +22,7 @@ defmodule Ontogen.CLI.Commands.RevertTest do
 
     refute File.exists?(Ontogen.CLI.Stage.default_file())
 
-    assert {:ok, [%Ontogen.Commit{} = revert | ^history]} = Ontogen.dataset_history()
+    assert {:ok, [%Ontogen.Commit{} = revert | ^history]} = Ontogen.log()
 
     assert DateTime.diff(revert.time, DateTime.utc_now(), :second) <= 1
     assert revert.committer == Ontogen.Config.user!()
@@ -46,7 +46,7 @@ defmodule Ontogen.CLI.Commands.RevertTest do
                ~s[revert HEAD~3..HEAD~1 --message "#{message}"  --committed-by #{id(:agent)} --committed-at #{DateTime.to_iso8601(datetime())}]
              )
 
-    assert {:ok, [%Ontogen.Commit{} = revert | ^history]} = Ontogen.dataset_history()
+    assert {:ok, [%Ontogen.Commit{} = revert | ^history]} = Ontogen.log()
 
     assert revert.time == datetime()
     assert revert.committer == id(:agent)
@@ -66,7 +66,7 @@ defmodule Ontogen.CLI.Commands.RevertTest do
     assert {1, log} = capture_cli(~s[revert HEAD~3..HEAD~2])
     assert log =~ "No effective changes."
 
-    assert {:ok, ^history} = Ontogen.dataset_history()
+    assert {:ok, ^history} = Ontogen.log()
   end
 
   test "bad range" do

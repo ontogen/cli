@@ -61,13 +61,9 @@ defmodule Ontogen.CLI.Commands.Changeset do
   end
 
   defp changeset(range, options) do
-    opts = [range: range]
-
-    if resource = options[:resource] do
-      Ontogen.resource_changes(resource, opts)
-    else
-      Ontogen.dataset_changes(opts)
-    end
+    [range: range]
+    |> set_subject(options)
+    |> Ontogen.changeset()
   end
 
   defp changeset_formats(flags) do
@@ -79,4 +75,9 @@ defmodule Ontogen.CLI.Commands.Changeset do
       formats -> formats
     end
   end
+
+  defp set_subject(opts, %{resource: nil}), do: opts
+
+  defp set_subject(opts, %{resource: resource}),
+    do: Keyword.put(opts, :resource, resource)
 end
