@@ -1,5 +1,7 @@
 import Config
 
+config :logger, level: :warning
+
 # Ontogen config ####################################################
 
 config :ontogen,
