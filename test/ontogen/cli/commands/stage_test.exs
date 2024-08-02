@@ -27,14 +27,14 @@ defmodule Ontogen.CLI.Commands.StageTest do
       assert cli(~s[add #{file1}]) == 0
 
       assert File.exists?(Stage.default_file())
-      assert Stage.changeset() == Changeset.new!(add: graph1)
+      assert Stage.changeset() == Changeset.new!(add: with_default_prefixes(graph1))
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act)
 
       assert cli(~s[add #{file2} #{file3}]) == 0
 
       assert Stage.changeset() ==
-               Changeset.new!(add: graph([1, 2, 3, 4], prefixes: [ex: EX, rdf: RDF]))
+               Changeset.new!(add: graph([1, 2, 3, 4], prefixes: Stage.default_prefixes(ex: EX)))
 
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act)
@@ -43,25 +43,25 @@ defmodule Ontogen.CLI.Commands.StageTest do
 
       assert Stage.changeset() ==
                Changeset.new!(
-                 add: graph([1, 2], prefixes: [ex: EX, rdf: RDF]),
-                 remove: graph([3, 4], prefixes: [ex: EX, rdf: RDF])
+                 add: graph([1, 2]) |> with_default_prefixes(ex: EX),
+                 remove: graph([3, 4]) |> with_default_prefixes(ex: EX)
                )
 
       assert cli(~s[update #{file2}]) == 0
 
       assert Stage.changeset() ==
                Changeset.new!(
-                 add: graph([1], prefixes: [ex: EX, rdf: RDF]),
-                 update: graph([2, 3], prefixes: [ex: EX, rdf: RDF]),
-                 remove: graph([4], prefixes: [ex: EX, rdf: RDF])
+                 add: graph([1]) |> with_default_prefixes(ex: EX),
+                 update: graph([2, 3]) |> with_default_prefixes(ex: EX),
+                 remove: graph([4]) |> with_default_prefixes(ex: EX)
                )
 
       assert cli(~s[replace #{file2} #{file3}]) == 0
 
       assert Stage.changeset() ==
                Changeset.new!(
-                 add: graph([1], prefixes: [ex: EX, rdf: RDF]),
-                 replace: graph([2, 3, 4], prefixes: [ex: EX, rdf: RDF])
+                 add: graph([1]) |> with_default_prefixes(ex: EX),
+                 replace: graph([2, 3, 4]) |> with_default_prefixes(ex: EX)
                )
     end
 
@@ -143,7 +143,7 @@ defmodule Ontogen.CLI.Commands.StageTest do
       assert cli(~s[stage --update #{file1}]) == 0
 
       assert File.exists?(Stage.default_file())
-      assert Stage.changeset() == Changeset.new!(update: graph1)
+      assert Stage.changeset() == Changeset.new!(update: with_default_prefixes(graph1))
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act)
 
@@ -151,8 +151,8 @@ defmodule Ontogen.CLI.Commands.StageTest do
 
       assert Stage.changeset() ==
                Changeset.new!(
-                 update: graph([1], prefixes: [ex: EX, rdf: RDF]),
-                 replace: graph([2, 3, 4], prefixes: [ex: EX, rdf: RDF])
+                 update: graph([1]) |> with_default_prefixes(ex: EX),
+                 replace: graph([2, 3, 4]) |> with_default_prefixes(ex: EX)
                )
 
       assert {:ok, speech_act} = Stage.speech_act_description()
@@ -162,8 +162,8 @@ defmodule Ontogen.CLI.Commands.StageTest do
 
       assert Stage.changeset() ==
                Changeset.new!(
-                 add: graph([3, 4], prefixes: [ex: EX, rdf: RDF]),
-                 remove: graph([1, 2], prefixes: [ex: EX, rdf: RDF])
+                 add: graph([3, 4]) |> with_default_prefixes(ex: EX),
+                 remove: graph([1, 2]) |> with_default_prefixes(ex: EX)
                )
     end
 
@@ -259,7 +259,7 @@ defmodule Ontogen.CLI.Commands.StageTest do
 
       assert cli(~s[stage --update #{file}]) == 0
 
-      assert Stage.changeset() == Changeset.new!(update: graph)
+      Changeset.new!(update: Graph.add_prefixes(graph, og: Og))
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act)
     end
@@ -278,7 +278,7 @@ defmodule Ontogen.CLI.Commands.StageTest do
 
       assert cli(~s[stage --add #{file}]) == 0
 
-      assert Stage.changeset() == Changeset.new!(add: graph)
+      assert Stage.changeset() == Changeset.new!(add: with_default_prefixes(graph))
     end
   end
 
@@ -301,5 +301,12 @@ defmodule Ontogen.CLI.Commands.StageTest do
     end
 
     assert Description.empty?(speech_act)
+  end
+
+  defp with_default_prefixes(graph, prefixes \\ []) do
+    graph
+    |> Graph.add_prefixes(Stage.default_prefixes())
+    |> Graph.add_prefixes(og: Og)
+    |> Graph.add_prefixes(prefixes)
   end
 end

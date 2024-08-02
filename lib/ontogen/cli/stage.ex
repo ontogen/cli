@@ -3,10 +3,25 @@ defmodule Ontogen.CLI.Stage do
   alias Ontogen.SpeechAct
   alias Ontogen.SpeechAct.Changeset
   alias Ontogen.NS.Og
-  alias RDF.{Dataset, Graph, Description}
+  alias RDF.{Dataset, Graph, Description, PrefixMap}
 
   @default_file "STAGE.trig"
   def default_file, do: @default_file
+
+  @default_prefixes RDF.default_prefixes(
+                      og: Og,
+                      rdf: RDF.NS.RDF,
+                      rdfs: RDF.NS.RDFS,
+                      xsd: RDF.NS.XSD,
+                      owl: RDF.NS.OWL,
+                      skos: SKOS,
+                      foaf: FOAF,
+                      prov: PROV,
+                      dcat: DCAT,
+                      dct: "http://purl.org/dc/terms/"
+                    )
+  def default_prefixes, do: @default_prefixes
+  def default_prefixes(additional), do: PrefixMap.merge!(@default_prefixes, additional)
 
   def stage(changes, options) do
     stage(options[:stage] || @default_file, changes, options)
@@ -98,7 +113,7 @@ defmodule Ontogen.CLI.Stage do
   defp new_stage(nil, input_changeset, options) do
     {:ok,
      input_changeset
-     |> Changeset.to_rdf()
+     |> Changeset.to_rdf(prefixes: @default_prefixes)
      |> Dataset.add(new_speech_act(options))}
   end
 
