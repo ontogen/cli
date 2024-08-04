@@ -23,7 +23,7 @@ defmodule Ontogen.CLI.Commands.CommitTest do
 
     assert {:ok, [%Ontogen.Commit{} = commit]} = Ontogen.log()
     assert DateTime.diff(commit.time, DateTime.utc_now(), :second) <= 1
-    assert commit.committer == user_iri()
+    assert commit.committer == user()
     assert commit.message == message
     assert Ontogen.Proposition.graph(commit.add) == graph
 
@@ -79,7 +79,7 @@ defmodule Ontogen.CLI.Commands.CommitTest do
 
     assert {:ok, [%Ontogen.Commit{} = commit]} = Ontogen.log()
     assert DateTime.diff(commit.time, DateTime.utc_now(), :second) <= 1
-    assert commit.committer == user_iri()
+    assert commit.committer == user()
     assert commit.message == message
     assert Ontogen.Proposition.graph(commit.add) == graph
 

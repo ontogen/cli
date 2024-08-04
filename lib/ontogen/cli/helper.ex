@@ -64,7 +64,8 @@ defmodule Ontogen.CLI.Helper do
     end
   end
 
-  def user_iri, do: Ontogen.Config.user!().__id__
+  def user, do: Ontogen.Config.user!()
+  def user_iri, do: user().__id__
   def user_id, do: to_string(user_iri())
 
   def adapter_types do

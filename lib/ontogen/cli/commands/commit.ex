@@ -62,11 +62,14 @@ defmodule Ontogen.CLI.Commands.Commit do
              speech_act: speech_act,
              message: options[:message],
              time: XSD.DateTime.value(options[:committed_at]),
-             committer: RDF.iri(options[:committed_by] || Helper.user_iri()),
+             committer: committer(options[:committed_by]),
              additional_prov_metadata: metadata
            ) do
       Stage.reset(stage_file)
       success(Helper.commit_info(commit))
     end
   end
+
+  defp committer(nil), do: Ontogen.Config.user!()
+  defp committer(committed_by), do: RDF.iri(committed_by)
 end
