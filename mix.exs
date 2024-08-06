@@ -51,7 +51,7 @@ defmodule Ontogen.CLI.MixProject do
       rdf_ex_dep(:prov, "~> 0.1"),
       {:optimus, "~> 0.5"},
       {:owl, "~> 0.9"},
-      {:burrito, "~> 1.0"},
+      {:burrito, "~> 1.1"},
       {:hackney, "~> 1.17"}
     ]
   end
