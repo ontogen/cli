@@ -17,9 +17,9 @@ defmodule Ontogen.CLI.Helper do
   end
 
   def puts(string, category) when is_binary(string) do
-    string
-    |> Owl.Data.tag(@message_category_colors[category])
-    |> Owl.IO.puts()
+    [@message_category_colors[category], string, :reset]
+    |> IO.ANSI.format()
+    |> IO.puts()
   end
 
   def info(message), do: puts(message, :info)
