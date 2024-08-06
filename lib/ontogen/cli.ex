@@ -23,7 +23,7 @@ defmodule Ontogen.CLI do
   @command_map Map.new(@commands, &{&1.name(), &1})
 
   @opt_parser_spec [
-    name: "ontogen",
+    name: "og",
     description: "Ontogen CLI",
     version: File.read!("VERSION"),
     author: "Marcel Otto",

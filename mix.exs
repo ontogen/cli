@@ -21,7 +21,7 @@ defmodule Ontogen.CLI.MixProject do
 
   def releases do
     [
-      ontogen_cli: [
+      og: [
         steps: [:assemble, &Burrito.wrap/1],
         burrito: [
           targets: [
