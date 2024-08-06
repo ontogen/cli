@@ -47,7 +47,7 @@ defmodule Ontogen.CLI.Commands.Log do
         ],
         resource_only: [
           long: "--resource-only",
-          help: "Show only IRIs of changed resources"
+          help: "Shows the IRIs of changed resources"
         ],
         changes: [
           long: "--commit-changes",
