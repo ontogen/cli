@@ -64,6 +64,23 @@ defmodule Ontogen.CLI.Commands.CommitTest do
     assert log =~ "2 insertions, 0 deletions, 0 overwrites"
   end
 
+  test "with non-ISO 8601 time format" do
+    {_graph, file} = graph_file([1, 2])
+
+    assert cli(~s[update #{file} --created-at 2016-02-29T22:25:00]) ==
+             0
+
+    assert {0, _} =
+             capture_cli(
+               ~s[commit --message Foo --committed-at 01/01/2018 --committed-by #{id(:agent)}]
+             )
+
+    assert {:ok, [%Ontogen.Commit{} = commit]} = Ontogen.log()
+    assert commit.committer == id(:agent)
+    assert commit.time == ~N[2018-01-01 00:00:00]
+    assert commit.speech_act.time == ~N[2016-02-29 22:25:00]
+  end
+
   test "with staging" do
     {graph, file} = graph_file([1, 2])
     message = "Foo"

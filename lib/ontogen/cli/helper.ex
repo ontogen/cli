@@ -54,11 +54,18 @@ defmodule Ontogen.CLI.Helper do
   def set_color(opts, %{color: true}), do: Keyword.put(opts, :color, true)
   def set_color(opts, %{no_color: true}), do: Keyword.put(opts, :color, false)
 
-  def valid_xsd_datetime(string) do
-    datetime = XSD.datetime(string)
+  def valid_xsd_datetime(string) when is_binary(string) do
+    case Ontogen.Utils.parse_time(string) do
+      {:ok, datetime} -> valid_xsd_datetime(datetime)
+      {:error, error} -> {:error, "invalid datetime: #{error}"}
+    end
+  end
 
-    if XSD.DateTime.valid?(datetime) do
-      {:ok, datetime}
+  def valid_xsd_datetime(datetime) do
+    xsd_datetime = XSD.datetime(datetime)
+
+    if XSD.DateTime.valid?(xsd_datetime) do
+      {:ok, xsd_datetime}
     else
       {:error, "invalid datetime"}
     end
