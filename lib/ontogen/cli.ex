@@ -35,14 +35,12 @@ defmodule Ontogen.CLI do
 
   def opt_parser_spec, do: @opt_parser_spec
 
-  if Application.compile_env(:ontogen_cli, :in_burrito) do
-    def start(_type, _args) do
+  def start(_type, _args) do
+    if System.get_env("__BURRITO") == "1" do
       Burrito.Util.Args.get_arguments()
       |> main()
       |> System.halt()
-    end
-  else
-    def start(_, _) do
+    else
       {:ok, self()}
     end
   end
