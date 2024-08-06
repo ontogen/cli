@@ -132,7 +132,7 @@ defmodule Ontogen.CLI.Commands.CommitTest do
     assert log =~ "No effective changes."
   end
 
-  test "additional statements in stage file are stored in the PROV graph" do
+  test "additional statements in stage file are stored in the history graph" do
     {graph, file} = graph_file([1, 2])
 
     assert cli(
