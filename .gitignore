@@ -24,3 +24,10 @@ ontogen_cli-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# Ignore escript for faster local tests.
+/og
+
+# Ignore local Ontogen repository for development.
+/.ontogen
+/STAGE.trig
