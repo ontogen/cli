@@ -1,6 +1,8 @@
 defmodule Ontogen.CLI.MixProject do
   use Mix.Project
 
+  @scm_url "https://github.com/ontogen/cli"
+
   @version File.read!("VERSION") |> String.trim()
 
   def project do
@@ -9,9 +11,9 @@ defmodule Ontogen.CLI.MixProject do
       version: @version,
       elixir: "~> 1.16",
       start_permanent: Mix.env() == :prod,
+      elixirc_paths: elixirc_paths(Mix.env()),
       deps: deps(),
       aliases: aliases(),
-      elixirc_paths: elixirc_paths(Mix.env()),
       releases: releases(),
       escript: [
         main_module: Ontogen.CLI,
@@ -24,7 +26,11 @@ defmodule Ontogen.CLI.MixProject do
         "coveralls.post": :test,
         "coveralls.html": :test
       ],
-      test_coverage: [tool: ExCoveralls]
+      test_coverage: [tool: ExCoveralls],
+
+      # Docs
+      name: "Ontogen CLI",
+      docs: docs()
     ]
   end
 
@@ -61,6 +67,7 @@ defmodule Ontogen.CLI.MixProject do
       {:optimus, "~> 0.5"},
       {:burrito, "~> 1.1"},
       {:hackney, "~> 1.17"},
+      {:ex_doc, "~> 0.34", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.18", only: :test},
       # This dependency is needed for ExCoveralls when OTP < 25
       {:castore, "~> 1.0"}
@@ -79,6 +86,21 @@ defmodule Ontogen.CLI.MixProject do
       "LOCAL" -> {dep, path: "../../../RDF.ex/src/#{dep}"}
       _ -> {dep, version}
     end
+  end
+
+  defp docs do
+    [
+      main: "Ontogen.CLI",
+      source_url: @scm_url,
+      source_ref: "v#{@version}",
+      logo: "logo.png",
+      skip_undefined_reference_warnings_on: ["CHANGELOG.md"],
+      extras: [
+        {:"README.md", [title: "About"]},
+        {:"CHANGELOG.md", [title: "CHANGELOG"]},
+        {:"LICENSE.md", [title: "License"]}
+      ]
+    ]
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
