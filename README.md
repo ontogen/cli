@@ -61,7 +61,7 @@ ec8108e3f4 - Initial commit (now) <John Doe john.doe@example.com>
  +     <http://www.example.org/jobTitle> "Assistant Designer" .
 ```
 
-_For more examples, setup instruction and a command reference, please refer to the [User Guide](https://ontogen.io/user-guide/)_
+_For more examples, setup instruction and a command reference, please refer to the [User Guide](https://ontogen.io/docs/user-guide/)_
 
 
 ## Contact
