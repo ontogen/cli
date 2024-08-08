@@ -63,7 +63,7 @@ defmodule Ontogen.CLI.MixProject do
       {:hackney, "~> 1.17"},
       {:excoveralls, "~> 0.18", only: :test},
       # This dependency is needed for ExCoveralls when OTP < 25
-      {:castore, "~> 1.0", only: :test}
+      {:castore, "~> 1.0"}
     ]
   end
 
