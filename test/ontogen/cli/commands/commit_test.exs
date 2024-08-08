@@ -162,5 +162,4 @@ defmodule Ontogen.CLI.Commands.CommitTest do
 
     assert Ontogen.history!() |> Graph.include?(statement(1))
   end
-  end
 end
