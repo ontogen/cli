@@ -15,7 +15,14 @@ defmodule Ontogen.CLI.MixProject do
       escript: [
         main_module: Ontogen.CLI,
         name: "og"
-      ]
+      ],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ],
+      test_coverage: [tool: ExCoveralls]
     ]
   end
 
@@ -51,7 +58,10 @@ defmodule Ontogen.CLI.MixProject do
       rdf_ex_dep(:prov, "~> 0.1"),
       {:optimus, "~> 0.5"},
       {:burrito, "~> 1.1"},
-      {:hackney, "~> 1.17"}
+      {:hackney, "~> 1.17"},
+      {:excoveralls, "~> 0.18", only: :test},
+      # This dependency is needed for ExCoveralls when OTP < 25
+      {:castore, "~> 1.0", only: :test}
     ]
   end
 
