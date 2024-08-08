@@ -10,6 +10,7 @@ defmodule Ontogen.CLI.MixProject do
       elixir: "~> 1.16",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      aliases: aliases(),
       elixirc_paths: elixirc_paths(Mix.env()),
       releases: releases(),
       escript: [
@@ -17,6 +18,7 @@ defmodule Ontogen.CLI.MixProject do
         name: "og"
       ],
       preferred_cli_env: [
+        check: :test,
         coveralls: :test,
         "coveralls.detail": :test,
         "coveralls.post": :test,
@@ -81,4 +83,16 @@ defmodule Ontogen.CLI.MixProject do
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
+
+  defp aliases do
+    [
+      check: [
+        "clean",
+        "deps.unlock --check-unused",
+        "compile --warnings-as-errors",
+        "format --check-formatted",
+        "test --warnings-as-errors"
+      ]
+    ]
+  end
 end
