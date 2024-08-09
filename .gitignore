@@ -31,3 +31,6 @@ ontogen_cli-*.tar
 # Ignore local Ontogen repository for development.
 /.ontogen
 /STAGE.trig
+
+# Burrito releases (releases are build with a GitHub workflow)
+/burrito_out
