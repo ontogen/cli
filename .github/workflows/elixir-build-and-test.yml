@@ -19,9 +19,7 @@ jobs:
           - 3030:3030
         env:
           FUSEKI_DATASET_1: /ontogen-test-dataset
-        options: >-
-          --name fuseki
-          --entrypoint "/bin/sh"
+        options: --name fuseki
     env:
       MIX_ENV: test
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -40,7 +38,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Start Fuseki with custom configuration
+      - name: Create and copy shiro.ini, then restart Fuseki
         run: |
           echo "
           ## Minimal configuration without auth from https://jena.apache.org/documentation/fuseki2/fuseki-security.html
@@ -56,13 +54,10 @@ jobs:
           /$/** = localhost
           /**=anon
           " > shiro.ini
-          docker exec fuseki sh -c "cp /github-workspace/shiro.ini /fuseki/shiro.ini && /docker-entrypoint.sh"
-          timeout 30s bash -c 'until curl -s -f -o /dev/null http://localhost:3030/$/ping; do echo "Waiting for Fuseki..."; sleep 2; done'
-
-      - name: Copy shiro.ini to Fuseki container
-        run: |
           docker cp shiro.ini fuseki:/fuseki/shiro.ini
           docker exec fuseki ls -l /fuseki/shiro.ini
+          docker restart fuseki
+          timeout 30s bash -c 'until curl -s -f -o /dev/null http://localhost:3030/$/ping; do echo "Waiting for Fuseki..."; sleep 2; done'
 
       - name: Setup Elixir Project
         uses: ./.github/actions/elixir-setup
