@@ -21,7 +21,6 @@ jobs:
           FUSEKI_DATASET_1: /ontogen-test-dataset
         options: >-
           --name fuseki
-          --entrypoint "/bin/sh"
     env:
       MIX_ENV: test
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
