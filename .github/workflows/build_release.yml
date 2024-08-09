@@ -1,14 +1,16 @@
-name: Test Burrito Build
+name: Build and release precompiled binaries
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to rebuild (e.g., v1.0.0)'
+        required: true
 
 jobs:
-  test_build:
+  build_release:
     name: Test Burrito Build
     runs-on: ubuntu-latest
     env:
@@ -54,7 +56,24 @@ jobs:
       - name: Create release
         run: mix release
 
-      - name: Check Burrito output
-        run: |
-          ls -l burrito_out/
-          file burrito_out/*
+      - name: Create GitHub release
+        if: startsWith(github.ref, 'refs/tags/') || github.event.inputs.tag
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          release_name: Release ${{ github.event.inputs.tag || github.ref_name }}
+          draft: true
+          prerelease: false
+
+      - name: Upload binaries to release
+        if: startsWith(github.ref, 'refs/tags/') || github.event.inputs.tag
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: burrito_out/*
+          tag: ${{ github.event.inputs.tag || github.ref_name }}
+          overwrite: true
+          file_glob: true
