@@ -1,0 +1,60 @@
+name: Test Burrito Build
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test_build:
+    name: Test Burrito Build
+    runs-on: ubuntu-latest
+    env:
+      MIX_ENV: prod
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: 26.x
+          elixir-version: 1.17.x
+
+      - name: Cache Mix
+        uses: actions/cache@v3
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-
+
+      - name: Cache Burrito OTP deps
+        uses: actions/cache@v3
+        with:
+          key: ${{ runner.os }}-burrito-
+          path: |
+            ~/.cache/burrito_file_cache/
+            ~/burrito_out/
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Install Burrito dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xz-utils p7zip-full
+
+      - name: Setup Zig for burrito
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.13.0
+
+      - name: Create release
+        run: mix release
+
+      - name: Check Burrito output
+        run: |
+          ls -l burrito_out/
+          file burrito_out/*
