@@ -1,6 +1,7 @@
 defmodule Ontogen.CLI.Helper do
   alias RDF.XSD
   alias Ontogen.Store
+  alias Ontogen.CLI.NoRepositoryError
 
   import Ontogen.Utils
   import Ontogen.IdUtils, only: [to_hash: 1]
