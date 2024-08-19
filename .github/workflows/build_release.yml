@@ -56,6 +56,25 @@ jobs:
         with:
           version: 0.13.0
 
+      - name: Debug before setting environment variables
+        run: |
+          echo "TERM: $TERM"
+          echo "COLORTERM: $COLORTERM"
+          echo "FORCE_COLOR: $FORCE_COLOR"
+          elixir -e "IO.puts IO.ANSI.enabled?()"
+
+      - name: Set environment variables
+        run: |
+          echo "TERM=xterm-256color" >> $GITHUB_ENV
+          echo "FORCE_COLOR=1" >> $GITHUB_ENV
+
+      - name: Debug after setting environment variables
+        run: |
+          echo "TERM: $TERM"
+          echo "COLORTERM: $COLORTERM"
+          echo "FORCE_COLOR: $FORCE_COLOR"
+          elixir -e "IO.puts IO.ANSI.enabled?()"
+
       - name: Create release
         run: mix release
 
@@ -70,3 +89,28 @@ jobs:
           files: burrito_out/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Test executable
+        run: |
+          # Find the correct executable
+          EXECUTABLE=$(find burrito_out -name "og_linux_x86_64" -type f)
+          if [ -z "$EXECUTABLE" ]; then
+            echo "Error: Could not find the Linux x86_64 executable"
+            exit 1
+          fi
+
+          # Output the path to the executable
+          echo "Found executable: $EXECUTABLE"
+
+          # Make it executable (in case it's not already)
+          chmod +x "$EXECUTABLE"
+
+          # Print the type of the file to ensure it's an executable
+          file "$EXECUTABLE"
+
+          # Test the executable
+          "$EXECUTABLE" --version
+
+          # Test a command that should output colors
+          "$EXECUTABLE" log
+
