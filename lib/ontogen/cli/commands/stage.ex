@@ -21,7 +21,7 @@ defmodule Ontogen.CLI.Commands.Stage do
         Action.speech_act_opt_spec()
 
   @impl true
-  def call(args, options, _flags, []) do
+  def handle_call(args, options, _flags, []) do
     Stage.stage(options, Map.merge(options, args))
   end
 end

@@ -39,7 +39,7 @@ defmodule Ontogen.CLI.Commands.Commit do
     flags: []
 
   @impl true
-  def call(%{stage: file}, options, _flags, []) do
+  def handle_call(%{stage: file}, options, _flags, []) do
     stage_file = file || Stage.default_file()
 
     with :ok <- stage(stage_file, options) do

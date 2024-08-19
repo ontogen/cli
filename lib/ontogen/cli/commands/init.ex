@@ -31,10 +31,12 @@ defmodule Ontogen.CLI.Commands.Init do
       ]
     ]
 
-  @ontogen_dir ".ontogen"
+  def call(args, options, flags, unknown) do
+    handle_call(args, options, flags, unknown)
+  end
 
   @impl true
-  def call(%{}, options, _flags, []) do
+  def handle_call(%{}, options, _flags, []) do
     with {:ok, directory} <- setup_directory(options),
          :ok <- generate_config(directory, options) do
       File.cd!(directory, fn -> Ontogen.Bog.create_salt_base_path() end)
@@ -43,15 +45,14 @@ defmodule Ontogen.CLI.Commands.Init do
     end
   end
 
-  defp ontogen_dir(dir), do: Path.join(dir, @ontogen_dir)
-
   defp setup_directory(options) do
-    project_dir = options[:directory] || File.cwd!()
+    ontogen_dir = Ontogen.CLI.ontogen_dir(options)
+    project_dir = Ontogen.CLI.project_dir(options)
 
-    if project_dir |> ontogen_dir() |> File.exists?() do
+    if File.exists?(ontogen_dir) do
       {:error, "Already initialized Ontogen repository found at #{project_dir}"}
     else
-      with :ok <- project_dir |> ontogen_dir() |> File.mkdir_p() do
+      with :ok <- File.mkdir_p(ontogen_dir) do
         {:ok, project_dir}
       end
     end

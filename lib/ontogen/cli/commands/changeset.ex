@@ -43,7 +43,7 @@ defmodule Ontogen.CLI.Commands.Changeset do
       ] ++ color_flags()
 
   @impl true
-  def call(%{range: range_spec}, options, flags, []) do
+  def handle_call(%{range: range_spec}, options, flags, []) do
     with {:ok, range} <- Commit.Range.parse(range_spec, single_ref_as: :single_commit_range),
          {:ok, changeset} <- changeset(range, options) do
       if Commit.Changeset.empty?(changeset) do

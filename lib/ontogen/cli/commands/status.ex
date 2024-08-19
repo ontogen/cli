@@ -21,7 +21,7 @@ defmodule Ontogen.CLI.Commands.Status do
     flags: color_flags()
 
   @impl true
-  def call(%{stage: file}, options, flags, []) do
+  def handle_call(%{stage: file}, options, flags, []) do
     opts =
       []
       |> set_color(flags)

@@ -117,4 +117,17 @@ defmodule Ontogen.CLI.Helper do
      #{insertions_count} insertions, #{deletions_count} deletions, #{overwrites_count} overwrites
     """
   end
+
+  def ensure_repository_exists! do
+    with {:ok, cwd} <- File.cwd() do
+      if File.exists?(Ontogen.CLI.ontogen_dir()) do
+        :ok
+      else
+        {:error, NoRepositoryError.exception(current_path: cwd)}
+      end
+    else
+      {:error, posix_error} ->
+        {:error, NoRepositoryError.exception(reason: posix_error)}
+    end
+  end
 end

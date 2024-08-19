@@ -43,7 +43,7 @@ defmodule Ontogen.CLI.Commands.Revert do
     flags: []
 
   @impl true
-  def call(%{range: spec}, options, _flags, []) do
+  def handle_call(%{range: spec}, options, _flags, []) do
     with {:ok, range} <- Commit.Range.parse(spec, single_ref_as: :single_commit_range) do
       revert(range, options)
     end

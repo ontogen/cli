@@ -19,7 +19,7 @@ defmodule Ontogen.CLI.RepositoryCase do
 
     start_supervised({Ontogen, boot_opts})
 
-    if Map.get(context, :setup, true) do
+    if Map.get(context, :setup, Map.get(context, :init, true)) do
       {0, _} = capture_cli(~s[setup])
     end
 

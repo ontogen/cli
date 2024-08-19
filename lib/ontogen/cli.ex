@@ -35,6 +35,11 @@ defmodule Ontogen.CLI do
 
   def opt_parser_spec, do: @opt_parser_spec
 
+  @ontogen_dir ".ontogen"
+
+  def project_dir(opts \\ []), do: opts[:directory] || File.cwd!()
+  def ontogen_dir(opts \\ []), do: opts |> project_dir() |> Path.join(@ontogen_dir)
+
   def start(_type, _args) do
     if System.get_env("__BURRITO") == "1" do
       Burrito.Util.Args.get_arguments()

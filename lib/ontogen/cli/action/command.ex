@@ -30,7 +30,7 @@ defmodule Ontogen.CLI.Action.Command do
     quote do
       use Ontogen.CLI.Command, unquote(Macro.escape(command_spec))
 
-      def call(%{file: file}, options, _flags, files) do
+      def handle_call(%{file: file}, options, _flags, files) do
         Stage.stage([{unquote(action), [file | files]}], options)
       end
     end

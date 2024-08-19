@@ -80,7 +80,7 @@ defmodule Ontogen.CLI.Commands.Log do
       ] ++ color_flags()
 
   @impl true
-  def call(%{range: spec}, options, flags, []) do
+  def handle_call(%{range: spec}, options, flags, []) do
     with {:ok, range} <- range(spec),
          {:ok, log_stream} <- formatted_log(range, options, flags) do
       log_stream

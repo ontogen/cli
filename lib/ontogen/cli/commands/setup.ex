@@ -6,7 +6,7 @@ defmodule Ontogen.CLI.Commands.Setup do
     options: []
 
   @impl true
-  def call(%{}, _options, _flags, []) do
+  def handle_call(%{}, _options, _flags, []) do
     with {:ok, _service} <- Ontogen.setup() do
       success("Set up Ontogen repository")
     end
