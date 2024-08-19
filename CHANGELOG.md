@@ -5,7 +5,11 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com).
 
 
-## Unreleased
+## v0.1.1 - 2024-08-19
+
+The executables for this release (distributed via Homebrew) are built on a 
+machine where the produced binaries support colored output. This hopefully  
+ensures that users should experience the intended colored user interface.
 
 ### Fixed
 
@@ -14,7 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
   became visible to CLI users in this state.
 
 
-[Compare v0.1.0...HEAD](https://github.com/ontogen/cli/compare/v0.1.0...HEAD)
+[Compare v0.1.0...v0.1.1](https://github.com/ontogen/cli/compare/v0.1.0...v0.1.1)
 
 
 
