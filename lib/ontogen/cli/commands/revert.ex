@@ -54,7 +54,7 @@ defmodule Ontogen.CLI.Commands.Revert do
       [
         range: range,
         time: XSD.DateTime.value(options[:committed_at]),
-        committer: RDF.iri(options[:committed_by] || Helper.user_iri())
+        committer: Helper.committer(options[:committed_by])
       ]
       |> set_message(options)
 

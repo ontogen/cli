@@ -77,6 +77,9 @@ defmodule Ontogen.CLI.Helper do
   def user_iri, do: user().__id__
   def user_id, do: to_string(user_iri())
 
+  def committer(nil), do: user()
+  def committer(committed_by), do: RDF.iri(committed_by)
+
   def adapter_types do
     Enum.map_join(Store.adapters(), ", ", &Store.Adapter.type_name/1) <>
       " or Generic for the generic store adapter"
