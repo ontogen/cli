@@ -47,9 +47,7 @@ defmodule Ontogen.CLI.Helper do
   end
 
   def set_color(opts, %{color: false, no_color: false}),
-    # TODO: set this back, when we have a working CI solution for testing the CI-built Burrito executable
-    # do: Keyword.put(opts, :color, IO.ANSI.enabled?())
-    do: Keyword.put(opts, :color, true)
+      do: Keyword.put(opts, :color, Ontogen.ansi_enabled?())
 
   def set_color(_, %{color: true, no_color: true}),
     do: raise(ArgumentError, "both flags --color and --no-color set")

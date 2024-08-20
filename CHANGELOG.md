@@ -5,11 +5,21 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com).
 
 
-## v0.1.1 - 2024-08-19
+## Unreleased
 
-The executables for this release (distributed via Homebrew) are built on a 
-machine where the produced binaries support colored output. This hopefully  
-ensures that users should experience the intended colored user interface.
+### Fixed
+
+- Update to Ontogen v0.1.1, replacing remaining `IO.ANSI.enabled?/0` checks
+  with `Ontogen.ansi_enabled?/0`. This completes the transition started in CLI v0.1.1,
+  ensuring consistent color output across all build environments, 
+  including CI-built executables.
+
+[Compare v0.1.1...HEAD](https://github.com/ontogen/cli/compare/v0.1.1...HEAD)
+
+
+
+
+## v0.1.1 - 2024-08-19
 
 ### Fixed
 
