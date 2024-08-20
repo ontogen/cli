@@ -130,9 +130,47 @@ defmodule Ontogen.CLI.Commands.StageTest do
       assert {:ok, speech_act} = Stage.speech_act_description()
       assert_speech_act_match(speech_act, time: :now, speaker: [speaker1, speaker2, speaker3])
     end
+
+    test "non-existing file" do
+      non_existing_file = "db/non-existing-file.nt"
+
+      expected_error_message =
+        "\e[31mcould not stream #{inspect(non_existing_file)}: no such file or directory\e[0m\e[0m\n"
+
+      assert {1, log} = capture_cli(~s[add #{non_existing_file}])
+      assert log =~ expected_error_message
+
+      assert {1, log} = capture_cli(~s[update #{non_existing_file}])
+      assert log =~ expected_error_message
+
+      assert {1, log} = capture_cli(~s[replace #{non_existing_file}])
+      assert log =~ expected_error_message
+
+      assert {1, log} = capture_cli(~s[remove #{non_existing_file}])
+      assert log =~ expected_error_message
+    end
   end
 
   describe "stage command" do
+    test "non-existing file" do
+      non_existing_file = "non-existing-file.nt"
+
+      expected_error_message =
+        "\e[31mcould not stream #{inspect(non_existing_file)}: no such file or directory\e[0m\e[0m\n"
+
+      assert {1, log} = capture_cli(~s[stage --add #{non_existing_file}])
+      assert log =~ expected_error_message
+
+      assert {1, log} = capture_cli(~s[stage --update #{non_existing_file}])
+      assert log =~ expected_error_message
+
+      assert {1, log} = capture_cli(~s[stage --replace #{non_existing_file}])
+      assert log =~ expected_error_message
+
+      assert {1, log} = capture_cli(~s[stage --remove #{non_existing_file}])
+      assert log =~ expected_error_message
+    end
+
     test "various actions" do
       {graph1, file1} = graph_file([1, 2], type: "nt")
       {_, file2} = graph_file([2, 3], type: "jsonld")
