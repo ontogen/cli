@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com).
 
 
-## Unreleased
+## v0.1.2 - 2024-08-20
 
 ### Fixed
 
@@ -14,7 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
   ensuring consistent color output across all build environments, 
   including CI-built executables.
 
-[Compare v0.1.1...HEAD](https://github.com/ontogen/cli/compare/v0.1.1...HEAD)
+[Compare v0.1.1...v0.1.2](https://github.com/ontogen/cli/compare/v0.1.1...v0.1.2)
 
 
 
