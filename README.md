@@ -33,7 +33,10 @@
 
 ## About the Project
 
-`og` is the command-line interface for Ontogen, a Data-Control-Management (DCM) solution specifically designed for RDF data in SPARQL triple stores. It provides an easy-to-use interface for version control capabilities similar to Git, but tailored for RDF datasets.
+`og` is the command-line interface for the [Ontogen](https://github.com/ontogen/ontogen) version control system for RDF datasets in SPARQL triple stores. It provides an easy-to-use interface for version control capabilities similar to Git, but tailored for RDF datasets.
+
+<img src="screenshot.png" align="center" />
+
 
 
 ## Usage
