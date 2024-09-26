@@ -25,6 +25,9 @@ ontogen_cli-*.tar
 # Temporary files, for example, from tests.
 /tmp/
 
+# The directory to keep the dbs used during development.
+/db/
+
 # Ignore escript for faster local tests.
 /og
 

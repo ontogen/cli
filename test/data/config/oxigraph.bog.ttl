@@ -6,5 +6,5 @@
 [ :this oga:Oxigraph
     ; og:storeEndpointScheme "http"
     ; og:storeEndpointHost "localhost"
-    ; og:storeEndpointPort 7879
+    ; og:storeEndpointPort 7889
 ] .
