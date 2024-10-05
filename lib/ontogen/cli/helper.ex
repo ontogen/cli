@@ -23,6 +23,10 @@ defmodule Ontogen.CLI.Helper do
     |> IO.puts()
   end
 
+  def puts(unknown, category) do
+    unknown |> inspect() |> puts(category)
+  end
+
   def info(message), do: puts(message, :info)
   def success(message), do: puts(message, :success)
   def warning(message), do: puts(message, :warning)
