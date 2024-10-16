@@ -67,6 +67,18 @@ ec8108e3f4 - Initial commit (now) <John Doe john.doe@example.com>
 _For more examples, setup instruction and a command reference, please refer to the [User Guide](https://ontogen.io/docs/user-guide/)_
 
 
+## Current Limitations
+
+While Ontogen aims to provide a robust version control system for RDF datasets, it's important to note its current limitations:
+
+1. **Single Graph Support**: The current version only supports versioning of individual graphs within an RDF dataset. Versioning of multi-graph datasets is not yet implemented.
+2. **Cryptic Graph Names**: Due to the current implementation, graph names are automatically generated UUID URIs and can not be changed.
+3. **Limited Configuration Updates**: There's currently no way to update and sync repository metadata and configuration from the configuration files in the file system with the respective copy in the store, after the initial repository setup.
+4. **Performance with Large Datasets**: Ontogen is not yet suitable for versioning large datasets. Adding substantial amounts of data in a single commit can hit query size limits in some triple stores. Additionally, certain queries become prohibitively slow with very large datasets (be sure to use the latest version to at least prevent timeouts).
+
+I'm actively working on addressing these limitations in future versions. The first three points will be addressed during the current follow-up funding period by the NLnet Foundation. For now, Ontogen is best suited for smaller to medium-sized datasets and experimental use.
+
+
 ## Contact
 
 Marcel Otto - [@marcelotto@mastodon.social](https://mastodon.social/@marcelotto) - [@MarcelOttoDE](https://twitter.com/MarcelOttoDE) - marcelotto@gmx.de
