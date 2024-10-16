@@ -5,6 +5,20 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com).
 
 
+## v0.1.3 - 2024-10-16
+
+This version includes important dependency updates:
+
+- Ontogen v0.1.2 removes timeouts that may occur when dealing with larger
+  amounts of data and improves some error messages (see the [full Ontogen changelog](https://github.com/ontogen/ontogen/blob/main/CHANGELOG.md))
+- RDF.ex v2.0.1 fixes a bug in the Turtle/TriG encoder
+- tzdata v1.1.2 fixes an error in the previous version where the :tzdata_release_updater
+  was terminating unexpectedly
+
+[Compare v0.1.2...v0.1.3](https://github.com/ontogen/cli/compare/v0.1.2...v0.1.3)
+
+
+
 ## v0.1.2 - 2024-08-20
 
 ### Fixed
